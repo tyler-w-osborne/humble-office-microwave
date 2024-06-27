@@ -1,12 +1,4 @@
-<div
-  style="
-    height: 100%;
-    background-color: teal;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  "
->
+<div class="home-container">
   <div class="people-list">
     <div class="header">
       <div>People</div>
@@ -17,7 +9,9 @@
     @for (person of People.List; track person) {
     <div
       class="person-entry"
-      [style.background-color]="People.Selected.Person === person ? 'teal' : ''"
+      [style.background-color]="
+        People.Selected.Person === person ? 'black' : ''
+      "
       (click)="People.Selected.Execute(person)"
     >
       <div
@@ -45,16 +39,10 @@
     </div>
     }
   </div>
-  <div
-    style="
-      background-image: url('assets/microwave.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      height: 200px;
-      width: 350px;
-    "
-  ></div>
-  <!-- <button>Nuke It...</button> -->
+  <div class="microwave-container">
+    <div class="microwave"></div>
+    <!-- <button>Nuke It...</button> -->
+  </div>
 </div>
 
 <ng-template #AddPersonTemplate>

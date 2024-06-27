@@ -1,3 +1,11 @@
+.home-container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 20vw repeat(3, minmax(0, 1fr)) 20vw;
+  gap: 1rem;
+  background-color: teal;
+}
+
 .people-list {
   display: flex;
   flex-direction: column;
@@ -19,6 +27,22 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
   cursor: pointer;
+  padding: 0.5rem;
+}
+
+.microwave-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 2 / span 3;
+}
+
+.microwave {
+  background-image: url("/assets/microwave.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 200px;
+  width: 350px;
 }
