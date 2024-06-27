@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.custom-dialog div.mat-mdc-dialog-surface {
+  background-color: cyan;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+button.mat-mdc-raised-button {
+  border-radius: 0.5rem;
+}
+
+:root {
+  --mat-toolbar-standard-height: 32px;
+}

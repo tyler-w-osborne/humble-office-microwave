@@ -1,0 +1,24 @@
+.people-list {
+  display: flex;
+  flex-direction: column;
+  background-color: darksalmon;
+  padding: 0.5rem;
+}
+
+.people-list > .header {
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 0.5rem;
+}
+
+.people-list > .person-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+}

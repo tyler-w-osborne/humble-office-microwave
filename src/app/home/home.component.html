@@ -1,0 +1,66 @@
+<div
+  style="
+    height: 100%;
+    background-color: teal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div class="people-list">
+    <div class="header">
+      <div>People</div>
+      <button mat-icon-button (click)="People.Add_Person.Execute()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    @for (person of People.List; track person) {
+    <div
+      class="person-entry"
+      [style.background-color]="People.Selected.Person === person ? 'teal' : ''"
+      (click)="People.Selected.Execute(person)"
+    >
+      <button
+        mat-icon-button
+        style="color: crimson"
+        (click)="People.Remove_Person(person)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+      <div>{{ person.Name }}</div>
+      <div>{{ person.Time }}</div>
+    </div>
+    }
+  </div>
+  <div
+    style="
+      background-image: url('assets/microwave.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      height: 200px;
+      width: 350px;
+    "
+  ></div>
+  <!-- <button>Nuke It...</button> -->
+</div>
+
+<ng-template #AddPersonTemplate>
+  <mat-toolbar>Add Person</mat-toolbar>
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="People.Add_Person.Name" />
+  </mat-form-field>
+  <div
+    style="
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    "
+  >
+    <button mat-raised-button [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button [mat-dialog-close]="true">Add Person</button>
+  </div>
+</ng-template>
+
+<ng-template #10KeyTemplate> </ng-template>
