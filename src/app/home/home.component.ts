@@ -77,16 +77,20 @@ export class HomeComponent implements OnInit {
   };
 
   Keyboard = {
-    Hours: <number>null,
-    Seconds: <number>null,
+    Hours: <number>0,
+    Minutes: <number>0,
+    Seconds: <number>0,
     Set: (total_seconds: number) => {
       const hours = total_seconds / 3600;
       const minutes = (hours - Math.floor(hours)) * 60;
       const seconds = (minutes - Math.floor(minutes)) * 60;
       console.log('Hours:', Math.floor(hours));
       console.log('Minutes:', Math.floor(minutes));
-      console.log('Seconds:', seconds);
+      console.log('Seconds:', Math.round(seconds));
       //const minutes
+      this.Keyboard.Hours = Math.floor(hours);
+      this.Keyboard.Minutes = Math.floor(minutes);
+      this.Keyboard.Seconds = Math.round(seconds);
     },
   };
 }
