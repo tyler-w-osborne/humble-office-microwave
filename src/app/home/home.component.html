@@ -20,13 +20,26 @@
       [style.background-color]="People.Selected.Person === person ? 'teal' : ''"
       (click)="People.Selected.Execute(person)"
     >
-      <button
-        mat-icon-button
-        style="color: crimson"
-        (click)="People.Remove_Person(person)"
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.25rem;
+        "
       >
-        <mat-icon>delete</mat-icon>
-      </button>
+        <button
+          mat-icon-button
+          style="color: crimson"
+          (click)="People.Remove_Person(person)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button style="color: seagreen">
+          <mat-icon>schedule</mat-icon>
+        </button>
+      </div>
       <div>{{ person.Name }}</div>
       <div>{{ person.Time }}</div>
     </div>
