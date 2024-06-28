@@ -46,3 +46,63 @@
   height: 200px;
   width: 350px;
 }
+
+.digit-container {
+  position: relative;
+  height: 45px;
+  width: 27px;
+  /* border: 1px solid white; */
+}
+
+.line {
+  background-color: rgb(29, 37, 37);
+  height: 15px;
+  width: 15px;
+  position: absolute;
+}
+
+.line-0 {
+  top: 0;
+  left: 5px;
+  height: 5px;
+}
+
+.line-1 {
+  top: 5px;
+  left: 20px;
+  width: 5px;
+}
+
+.line-2 {
+  top: 25px;
+  left: 20px;
+  width: 5px;
+}
+
+.line-3 {
+  bottom: 0;
+  left: 5px;
+  height: 5px;
+}
+
+.line-4 {
+  top: 25px;
+  left: 0;
+  width: 5px;
+}
+
+.line-5 {
+  top: 5px;
+  left: 0;
+  width: 5px;
+}
+
+.line-6 {
+  top: 20px;
+  left: 5px;
+  height: 5px;
+}
+
+.line.selected {
+  background-color: chartreuse;
+}

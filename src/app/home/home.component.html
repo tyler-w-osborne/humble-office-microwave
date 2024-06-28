@@ -30,7 +30,11 @@
         >
           <mat-icon>delete</mat-icon>
         </button>
-        <button mat-icon-button style="color: seagreen">
+        <button
+          mat-icon-button
+          style="color: seagreen"
+          (click)="Timer.Launch(person)"
+        >
           <mat-icon>schedule</mat-icon>
         </button>
       </div>
@@ -64,4 +68,125 @@
   </div>
 </ng-template>
 
-<ng-template #10KeyTemplate> </ng-template>
+<ng-template #TimerTemplate>
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      background-color: black;
+      padding: 0.5rem;
+    "
+  >
+    <!--Digital Display-->
+    <div
+      style="
+        grid-column: 1 / span 3;
+        height: 55px;
+        border: 1px solid white;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0px 1rem;
+      "
+    >
+      <div style="flex-grow: 1"></div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+        "
+      >
+        @for (i of Timer.STR.slice(0, 2); track $index) {
+        <ng-container
+          *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
+        ></ng-container>
+        }
+      </div>
+      <div style="color: white; font-weight: bolder; font-size: 2rem">:</div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+        "
+      >
+        @for (i of Timer.STR.slice(2, 4); track $index) {
+        <ng-container
+          *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
+        ></ng-container>
+        }
+      </div>
+    </div>
+    <!--Keypad Buttons-->
+    @for (i of [1,2,3,4,5,6,7,8,9]; track i) {
+    <button
+      mat-raised-button
+      style="background-color: black; color: white; border: 1px solid white"
+      (click)="Timer.AddTime(i)"
+    >
+      {{ i }}
+    </button>
+    }
+    <button
+      mat-raised-button
+      style="background-color: black; color: white; border: 1px solid crimson"
+      (click)="Timer.ClearTime()"
+    >
+      Clear
+    </button>
+    <button
+      mat-raised-button
+      style="background-color: black; color: white; border: 1px solid white"
+    >
+      0
+    </button>
+    <button
+      mat-raised-button
+      style="background-color: black; color: white; border: 1px solid seagreen"
+    >
+      Enter
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #DigitalLetterTemplate let-text let-digit="digit">
+  <!-- <div style="color: white">{{ text ?? digit }}</div> -->
+  <div class="digit-container">
+    <div
+      class="line line-0"
+      [class.selected]="[0, 2, 3, 5, 6, 7, 8, 9].includes(digit)"
+    ></div>
+    <div
+      class="line line-1"
+      [class.selected]="[0, 1, 2, 3, 4, 7, 8, 9].includes(digit)"
+    ></div>
+    <div
+      class="line line-2"
+      [class.selected]="[0, 1, 3, 4, 5, 6, 7, 8, 9].includes(digit)"
+    ></div>
+    <div
+      class="line line-3"
+      [class.selected]="[0, 2, 3, 5, 6, 8, 9].includes(digit)"
+    ></div>
+    <div
+      class="line line-4"
+      [class.selected]="[0, 2, 6, 8].includes(digit)"
+    ></div>
+    <div
+      class="line line-5"
+      [class.selected]="[0, 4, 5, 6, 8, 9].includes(digit)"
+    ></div>
+    <div
+      class="line line-6"
+      [class.selected]="[2, 3, 4, 5, 6, 8, 9].includes(digit)"
+    ></div>
+  </div>
+</ng-template>
