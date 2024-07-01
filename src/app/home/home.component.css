@@ -39,7 +39,15 @@
   grid-column: 2 / span 3;
 }
 
-.microwave {
+div.microwave {
+  background-image: url("../assets/microwave.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 200px;
+  width: 350px;
+}
+
+img.microwave {
   background-image: url("../assets/microwave.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -167,4 +175,20 @@
 
 .line.selected {
   background-color: chartreuse;
+}
+
+.button-skip {
+  color: cyan;
+}
+
+.button-complete {
+  color: seagreen;
+}
+
+button.button-skip:disabled {
+  color: dimgray;
+}
+
+area {
+  background-color: seagreen;
 }

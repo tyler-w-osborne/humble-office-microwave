@@ -26,11 +26,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    const _tyler = this.People.List.find(
-      (person) => person.Name.toUpperCase() === 'TYLER'
-    );
-    this.People.Selected.Execute(_tyler);
-    this.Timer.Launch(_tyler);
+    // const _tyler = this.People.List.find(
+    //   (person) => person.Name.toUpperCase() === 'TYLER'
+    // );
+    // this.People.Selected.Execute(_tyler);
+    // this.Timer.Launch(_tyler);
   }
 
   @ViewChild('AddPersonTemplate', { static: true })
@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             Name: this.People.Add_Person.Name,
             Minutes: null,
             Seconds: null,
-            Completed: false,
+            Completed: Completion.NA,
           });
           this.People.Set_Storage();
         }
@@ -82,11 +82,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (person_index !== -1) {
         this.People.List.splice(person_index, 1);
         this.People.Set_Storage();
+        new Audio('../assets/dumpster.ogg').play();
       }
     },
     Selected: {
       Person: <Person>{ Name: null, Minutes: null, Seconds: null },
       Execute: (person: Person) => {
+        console.log(person);
         this.People.Selected.Person = person;
         this.Timer.Set(person.Minutes, person.Seconds);
       },
@@ -103,7 +105,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     },
     Reset: () => {
       for (let i = 0; i < this.People.List.length; i++) {
-        this.People.List[i].Completed = false;
+        this.People.List[i].Completed = Completion.NA;
       }
       this.People.Set_Storage();
     },
@@ -112,7 +114,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('TimerTemplate', { static: false }) timer_ref: TemplateRef<any>;
   Timer = {
     Code: <[number, number, number, number]>[null, null, null, null],
-    //Hours: <number>0,
     Set: (minutes: number, seconds: number) => {
       if (!!minutes) {
         const minute_digits = minutes
@@ -141,6 +142,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.Timer.Code[3] = second_digits[1];
             break;
           case 1:
+            this.Timer.Code[2] = 0;
             this.Timer.Code[3] = second_digits[0];
             break;
         }
@@ -216,15 +218,35 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return digit_array;
     },
   };
+
+  Actions = {
+    Skip: (person: Person) => {
+      person.Completed = Completion.Skipped;
+      console.log(person);
+    },
+    Complete: (person: Person) => {
+      person.Completed = Completion.Completed;
+    },
+  };
+
+  get CompletionEnum(): typeof Completion {
+    return Completion;
+  }
 }
 
 enum LS_Key {
   People = 'People',
 }
 
+enum Completion {
+  NA = 'N/A',
+  Skipped = 'Skipped',
+  Completed = 'Completed',
+}
+
 interface Person {
   Name: string;
   Minutes: number;
   Seconds: number;
-  Completed: boolean;
+  Completed: Completion;
 }

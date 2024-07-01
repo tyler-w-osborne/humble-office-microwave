@@ -42,12 +42,59 @@
         </button>
       </div>
       <div>{{ person.Name }}</div>
-      <div>{{ person.Minutes }} : {{ person.Seconds }}</div>
+      <div>
+        {{ person.Minutes }} :
+        {{
+          person.Seconds.toString().length < 2
+            ? "0" + person.Seconds.toString()
+            : person.Seconds
+        }}
+      </div>
+
+      <!--Actions-->
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.25rem;
+        "
+      >
+        <button
+          mat-icon-button
+          class="button-skip"
+          [disabled]="person.Completed !== CompletionEnum.NA"
+          (click)="Actions.Skip(person)"
+        >
+          <mat-icon>skip_next</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          class="button-complete"
+          [disabled]="person.Completed !== CompletionEnum.NA"
+          (click)="Actions.Complete(person)"
+        >
+          <mat-icon>verified</mat-icon>
+        </button>
+      </div>
     </div>
     }
   </div>
   <div class="microwave-container">
-    <div class="microwave"></div>
+    <!--[matMenuTriggerFor]="MicrowaveMenu"-->
+    <div class="microwave" usemap="#microwave_map_2"></div>
+    <!-- <img class="microwave" usemap="#microwave_map" /> -->
+    <map name="microwave_map">
+      <area shape="circle" coords="175, 100, 500" />
+    </map>
+    <map name="microwave_map_2">
+      <area
+        shape="poly"
+        coords="100,100,200,200,300,300"
+        [matMenuTriggerFor]="MicrowaveMenu"
+      />
+    </map>
     <!-- <button>Nuke It...</button> -->
   </div>
 </div>
@@ -195,3 +242,8 @@
     ></div>
   </div>
 </ng-template>
+
+<mat-menu #MicrowaveMenu="matMenu">
+  <div mat-menu-item>Check Microwave</div>
+  <div mat-menu-item>Nuke It...</div>
+</mat-menu>
