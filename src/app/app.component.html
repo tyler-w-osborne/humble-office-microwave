@@ -1,5 +1,9 @@
 <div class="app-container">
-  <mat-toolbar>Nuke Machine</mat-toolbar>
+  <mat-toolbar>
+    <div style="cursor: pointer" routerLink="/home">Nuke Machine</div>
+    <div style="flex-grow: 1"></div>
+    <div style="cursor: pointer" routerLink="/about">About</div>
+  </mat-toolbar>
   <router-outlet />
 </div>
 

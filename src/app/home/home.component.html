@@ -2,6 +2,9 @@
   <div class="people-list">
     <div class="header">
       <div>People</div>
+      <button mat-raised-button (click)="People.Reset()">
+        Reset / New Day
+      </button>
       <button mat-icon-button (click)="People.Add_Person.Execute()">
         <mat-icon>add</mat-icon>
       </button>
@@ -39,7 +42,7 @@
         </button>
       </div>
       <div>{{ person.Name }}</div>
-      <div>{{ person.Time }}</div>
+      <div>{{ person.Minutes }} : {{ person.Seconds }}</div>
     </div>
     }
   </div>
@@ -82,7 +85,7 @@
     <div
       style="
         grid-column: 1 / span 3;
-        height: 55px;
+        height: calc(50px + 1rem);
         border: 1px solid white;
         display: flex;
         flex-direction: row;
@@ -102,7 +105,7 @@
           gap: 0.5rem;
         "
       >
-        @for (i of Timer.STR.slice(0, 2); track $index) {
+        @for (i of Timer.Code.slice(0, 2); track $index) {
         <ng-container
           *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
         ></ng-container>
@@ -118,7 +121,7 @@
           gap: 0.5rem;
         "
       >
-        @for (i of Timer.STR.slice(2, 4); track $index) {
+        @for (i of Timer.Code.slice(2, 4); track $index) {
         <ng-container
           *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
         ></ng-container>
@@ -145,12 +148,14 @@
     <button
       mat-raised-button
       style="background-color: black; color: white; border: 1px solid white"
+      (click)="Timer.AddTime(0)"
     >
       0
     </button>
     <button
       mat-raised-button
       style="background-color: black; color: white; border: 1px solid seagreen"
+      [mat-dialog-close]="true"
     >
       Enter
     </button>

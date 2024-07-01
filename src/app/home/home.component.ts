@@ -26,7 +26,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    //this.Timer.Launch();
+    const _tyler = this.People.List.find(
+      (person) => person.Name.toUpperCase() === 'TYLER'
+    );
+    this.People.Selected.Execute(_tyler);
+    this.Timer.Launch(_tyler);
   }
 
   @ViewChild('AddPersonTemplate', { static: true })
@@ -41,9 +45,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return;
       }
       this.People.List = [];
-      this.People.Set();
+      this.People.Set_Storage();
     },
-    Set: () => {
+    Set_Storage: () => {
       localStorage.setItem(LS_Key.People, JSON.stringify(this.People.List));
     },
     Add_Person: {
@@ -62,9 +66,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         ) {
           this.People.List.push({
             Name: this.People.Add_Person.Name,
-            Time: null,
+            Minutes: null,
+            Seconds: null,
+            Completed: false,
           });
-          this.People.Set();
+          this.People.Set_Storage();
         }
         this.People.Add_Person.Name = '';
       },
@@ -75,62 +81,101 @@ export class HomeComponent implements OnInit, AfterViewInit {
       );
       if (person_index !== -1) {
         this.People.List.splice(person_index, 1);
-        this.People.Set();
+        this.People.Set_Storage();
       }
     },
     Selected: {
-      Person: <Person>{ Name: null, Time: null },
+      Person: <Person>{ Name: null, Minutes: null, Seconds: null },
       Execute: (person: Person) => {
         this.People.Selected.Person = person;
-        this.Timer.Set(person.Time);
+        this.Timer.Set(person.Minutes, person.Seconds);
       },
+      Set_Time: (minutes: number, seconds: number) => {
+        this.People.Selected.Person.Minutes = minutes;
+        this.People.Selected.Person.Seconds = seconds;
+        const person_index = this.People.List.findIndex(
+          (person) => person.Name === this.People.Selected.Person.Name
+        );
+        this.People.List[person_index].Minutes = minutes;
+        this.People.List[person_index].Seconds = seconds;
+        this.People.Set_Storage();
+      },
+    },
+    Reset: () => {
+      for (let i = 0; i < this.People.List.length; i++) {
+        this.People.List[i].Completed = false;
+      }
+      this.People.Set_Storage();
     },
   };
 
   @ViewChild('TimerTemplate', { static: false }) timer_ref: TemplateRef<any>;
   Timer = {
-    STR: <[number, number, number, number]>[null, null, null, null],
+    Code: <[number, number, number, number]>[null, null, null, null],
     //Hours: <number>0,
-    Minutes: <number>0,
-    Seconds: <number>0,
-    Set: (total_seconds: number) => {
-      //const hours = total_seconds / 3600;
-      const minutes = total_seconds / 60;
-      const seconds = (minutes - Math.floor(minutes)) * 60;
-      //console.log('Hours:', Math.floor(hours));
-      console.log('Minutes:', Math.floor(minutes));
-      console.log('Seconds:', Math.round(seconds));
-      //const minutes
-      //this.Timer.Hours = Math.floor(hours);
-      this.Timer.Minutes = Math.floor(minutes);
-      this.Timer.Seconds = Math.round(seconds);
-      // const timer_str = [];
-      // const str_minutes = `${Math.floor(minutes)}`;
-      // if (str_minutes.length === 2) {
-      //   timer_str.push(Number(str_minutes[0]), Number(str_minutes[1]));
-      // } else {
-      //   timer_str.push(null, Math.floor(minutes));
-      // }
-      //this.Timer.STR = [null, Math.floor(minutes), null, Math.round(seconds)];
+    Set: (minutes: number, seconds: number) => {
+      const minute_digits = minutes
+        .toString()
+        .split('')
+        .map((digit) => Number(digit));
+      const second_digits = seconds
+        .toString()
+        .split('')
+        .map((digit) => Number(digit));
+      switch (minute_digits.length) {
+        case 2:
+          this.Timer.Code[0] = minute_digits[0];
+          this.Timer.Code[1] = minute_digits[1];
+          break;
+        case 1:
+          this.Timer.Code[1] = minute_digits[0];
+          console.log(this.Timer.Code);
+          break;
+      }
+      switch (second_digits.length) {
+        case 2:
+          this.Timer.Code[2] = second_digits[0];
+          this.Timer.Code[3] = second_digits[1];
+          break;
+        case 1:
+          this.Timer.Code[3] = second_digits[0];
+          break;
+      }
     },
     Launch: (person: Person) => {
-      this.Timer.Set(person.Time);
-      console.log(this.Timer.STR);
-      this._dialog.open(this.timer_ref);
+      this.Timer.Set(person.Minutes, person.Seconds);
+      console.log(this.Timer.Code);
+      this._dialog
+        .open(this.timer_ref)
+        .afterClosed()
+        .subscribe((should_save: boolean) => {
+          if (!!should_save) {
+            console.log(this.Timer.Code);
+            console.log(
+              Number(this.Timer.Code.slice(0, 2).join('')),
+              Number(this.Timer.Code.slice(2, 4).join(''))
+            );
+            this.People.Selected.Set_Time(
+              Number(this.Timer.Code.slice(0, 2).join('')),
+              Number(this.Timer.Code.slice(2, 4).join(''))
+            );
+          }
+          this.Timer.ClearTime();
+        });
     },
     AddTime: (digit: number) => {
-      const reverse_index = this.Timer.STR.findIndex(
+      const reverse_index = this.Timer.Code.findIndex(
         (str_digit) => !!!str_digit
       );
       if (reverse_index === -1) {
-        console.log(this.Timer.STR);
+        console.log(this.Timer.Code);
         return;
       }
-      this.Timer.STR.shift();
-      this.Timer.STR.push(digit);
+      this.Timer.Code.shift();
+      this.Timer.Code.push(digit);
     },
     ClearTime: () => {
-      this.Timer.STR = [null, null, null, null];
+      this.Timer.Code = [null, null, null, null];
     },
     DigitSplit: (
       minutes: number,
@@ -175,5 +220,7 @@ enum LS_Key {
 
 interface Person {
   Name: string;
-  Time: number;
+  Minutes: number;
+  Seconds: number;
+  Completed: boolean;
 }

@@ -1,7 +1,7 @@
 .home-container {
   height: 100%;
   display: grid;
-  grid-template-columns: 20vw repeat(3, minmax(0, 1fr)) 20vw;
+  grid-template-columns: 25vw repeat(3, minmax(0, 1fr)) 25vw;
   gap: 1rem;
   background-color: teal;
 }
@@ -54,7 +54,7 @@
   /* border: 1px solid white; */
 }
 
-.line {
+/* .line {
   background-color: rgb(29, 37, 37);
   height: 15px;
   width: 15px;
@@ -65,6 +65,7 @@
   top: 0;
   left: 5px;
   height: 5px;
+  width: 25px;
 }
 
 .line-1 {
@@ -101,6 +102,67 @@
   top: 20px;
   left: 5px;
   height: 5px;
+} */
+
+.line {
+  background-color: rgb(29, 37, 37);
+  height: 25px;
+  width: 25px;
+  position: absolute;
+}
+
+.line-0 {
+  top: 0;
+  /* left: 5px; */
+  left: 0px;
+  height: 5px;
+  clip-path: polygon(0 0, 100% 0, 20px 100%, 5px 100%);
+}
+
+.line-1 {
+  top: 0;
+  left: 20px;
+  width: 5px;
+  /* clip-path: polygon(0 5px, 100% 0, 100% 100%, 0 20px); */
+  clip-path: polygon(0 5px, 100% 0, 100% 100%, 0 22.5px);
+}
+
+.line-2 {
+  top: 25px;
+  left: 20px;
+  width: 5px;
+  /* clip-path: polygon(0 5px, 100% 0, 100% 100%, 0 20px); */
+  clip-path: polygon(0 2.5px, 100% 0, 100% 100%, 0 20px);
+}
+
+.line-3 {
+  top: 45px;
+  left: 0;
+  height: 5px;
+  clip-path: polygon(5px 0, 20px 0, 100% 100%, 0 100%);
+}
+
+.line-4 {
+  top: 25px;
+  left: 0;
+  width: 5px;
+  /* clip-path: polygon(0 0, 5px 5px, 100% 20px, 0 100%); */
+  clip-path: polygon(0 0, 5px 2.5px, 100% 20px, 0 100%);
+}
+
+.line-5 {
+  top: 0;
+  left: 0;
+  width: 5px;
+  /* clip-path: polygon(0 0, 5px 5px, 100% 20px, 0 100%); */
+  clip-path: polygon(0 0, 5px 5px, 100% 22.5px, 0 100%);
+}
+
+.line-6 {
+  top: 22.5px;
+  left: 0;
+  height: 10px;
+  clip-path: polygon(0 2.5px, 5px 0, 20px 0, 25px 2.5px, 20px 5px, 5px 5px);
 }
 
 .line.selected {
