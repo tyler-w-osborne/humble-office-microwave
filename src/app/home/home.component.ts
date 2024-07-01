@@ -114,32 +114,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
     Code: <[number, number, number, number]>[null, null, null, null],
     //Hours: <number>0,
     Set: (minutes: number, seconds: number) => {
-      const minute_digits = minutes
-        .toString()
-        .split('')
-        .map((digit) => Number(digit));
-      const second_digits = seconds
-        .toString()
-        .split('')
-        .map((digit) => Number(digit));
-      switch (minute_digits.length) {
-        case 2:
-          this.Timer.Code[0] = minute_digits[0];
-          this.Timer.Code[1] = minute_digits[1];
-          break;
-        case 1:
-          this.Timer.Code[1] = minute_digits[0];
-          console.log(this.Timer.Code);
-          break;
+      if (!!minutes) {
+        const minute_digits = minutes
+          .toString()
+          .split('')
+          .map((digit) => Number(digit));
+        switch (minute_digits.length) {
+          case 2:
+            this.Timer.Code[0] = minute_digits[0];
+            this.Timer.Code[1] = minute_digits[1];
+            break;
+          case 1:
+            this.Timer.Code[1] = minute_digits[0];
+            console.log(this.Timer.Code);
+            break;
+        }
       }
-      switch (second_digits.length) {
-        case 2:
-          this.Timer.Code[2] = second_digits[0];
-          this.Timer.Code[3] = second_digits[1];
-          break;
-        case 1:
-          this.Timer.Code[3] = second_digits[0];
-          break;
+      if (!!seconds) {
+        const second_digits = seconds
+          .toString()
+          .split('')
+          .map((digit) => Number(digit));
+        switch (second_digits.length) {
+          case 2:
+            this.Timer.Code[2] = second_digits[0];
+            this.Timer.Code[3] = second_digits[1];
+            break;
+          case 1:
+            this.Timer.Code[3] = second_digits[0];
+            break;
+        }
       }
     },
     Launch: (person: Person) => {
