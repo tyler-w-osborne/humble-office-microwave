@@ -229,8 +229,44 @@ export class HomeComponent implements OnInit, AfterViewInit {
     },
   };
 
+  @ViewChild('MicrowaveVentTemplate', { static: true })
+  microwave_vent_ref: TemplateRef<any>;
+  @ViewChild('MicrowaveInteriorTemplate', { static: true })
+  microwave_interior_ref: TemplateRef<any>;
+
+  Microwave = {
+    LaunchMenu: (mouse_event: MouseEvent, menu: 'Vent' | 'Interior') => {
+      mouse_event.preventDefault();
+      mouse_event.stopPropagation();
+      let template_ref: TemplateRef<any>;
+      switch (menu) {
+        case 'Vent':
+          template_ref = this.microwave_vent_ref;
+          break;
+        case 'Interior':
+          template_ref = this.microwave_interior_ref;
+          break;
+      }
+      if (!!!template_ref) {
+        return;
+      }
+      this._dialog.open(template_ref, {
+        panelClass: 'custom-dialog-action-list',
+        position: {
+          left: `${mouse_event.clientX}px`,
+          top: `${mouse_event.clientY}px`,
+        },
+        width: '125px',
+      });
+    },
+  };
+
   get CompletionEnum(): typeof Completion {
     return Completion;
+  }
+
+  alert(input: string) {
+    alert(input);
   }
 }
 
@@ -241,6 +277,7 @@ enum LS_Key {
 enum Completion {
   NA = 'N/A',
   Skipped = 'Skipped',
+  InProgress = 'In Progress',
   Completed = 'Completed',
 }
 

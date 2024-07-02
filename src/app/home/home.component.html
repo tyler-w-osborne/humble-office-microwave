@@ -1,5 +1,5 @@
 <div class="home-container">
-  <div class="people-list">
+  <div class="sidebar">
     <div class="header">
       <div>People</div>
       <button mat-raised-button (click)="People.Reset()">
@@ -9,92 +9,120 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    @for (person of People.List; track person) {
-    <div
-      class="person-entry"
-      [style.background-color]="
-        People.Selected.Person === person ? 'black' : ''
-      "
-      (click)="People.Selected.Execute(person)"
-    >
+    <div class="people-list">
+      @for (person of People.List; track person) {
       <div
-        style="
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.25rem;
+        class="person-entry"
+        [style.background-color]="
+          People.Selected.Person === person ? 'black' : 'salmon'
         "
+        (click)="People.Selected.Execute(person)"
       >
         <button
           mat-icon-button
-          style="color: crimson"
+          class="button-remove-person"
+          [disabled]="People.Selected.Person !== person"
           (click)="People.Remove_Person(person)"
         >
           <mat-icon>delete</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          style="color: seagreen"
-          (click)="Timer.Launch(person)"
-        >
-          <mat-icon>schedule</mat-icon>
-        </button>
-      </div>
-      <div>{{ person.Name }}</div>
-      <div>
-        {{ person.Minutes }} :
-        {{
-          person.Seconds.toString().length < 2
-            ? "0" + person.Seconds.toString()
-            : person.Seconds
-        }}
-      </div>
 
-      <!--Actions-->
-      <div
-        style="
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.25rem;
-        "
-      >
-        <button
-          mat-icon-button
-          class="button-skip"
-          [disabled]="person.Completed !== CompletionEnum.NA"
-          (click)="Actions.Skip(person)"
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.25rem;
+            grid-column: 2 / span 2;
+          "
         >
-          <mat-icon>skip_next</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          class="button-complete"
-          [disabled]="person.Completed !== CompletionEnum.NA"
-          (click)="Actions.Complete(person)"
+          <div>{{ person.Name }}</div>
+          <div>
+            {{ person.Minutes }} :
+            {{
+              !!person.Seconds && person.Seconds.toString().length < 2
+                ? "0" + person.Seconds.toString()
+                : person.Seconds
+            }}
+          </div>
+        </div>
+
+        <!--Actions-->
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.25rem;
+          "
         >
-          <mat-icon>verified</mat-icon>
-        </button>
+          <button
+            mat-icon-button
+            style="color: seagreen"
+            (click)="Timer.Launch(person)"
+          >
+            <mat-icon>schedule</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="button-skip"
+            [disabled]="person.Completed !== CompletionEnum.NA"
+            (click)="Actions.Skip(person)"
+          >
+            <mat-icon>skip_next</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="button-complete"
+            [disabled]="person.Completed !== CompletionEnum.NA"
+            (click)="Actions.Complete(person)"
+          >
+            <mat-icon>verified</mat-icon>
+          </button>
+        </div>
       </div>
+      }
     </div>
-    }
   </div>
   <div class="microwave-container">
     <!--[matMenuTriggerFor]="MicrowaveMenu"-->
-    <div class="microwave" usemap="#microwave_map_2"></div>
-    <!-- <img class="microwave" usemap="#microwave_map" /> -->
+    <!-- <div class="microwave" usemap="#microwave_map_2"></div> -->
+    <img class="microwave" src="assets/microwave.png" usemap="#microwave_map" />
     <map name="microwave_map">
-      <area shape="circle" coords="175, 100, 500" />
+      <!-- <area
+        shape="circle"
+        coords="100, 100, 10"
+        (click)="alert('you did it!')"
+      /> -->
+      <area
+        shape="poly"
+        coords="7,110,23,126,23,171,7,151"
+        (click)="Microwave.LaunchMenu($event, 'Vent')"
+      />
+      <area
+        shape="poly"
+        coords="79,79,251,69,248,164,82,176"
+        (click)="Microwave.LaunchMenu($event, 'Interior')"
+      />
+      <!-- <area
+        shape="poly"
+        coords="7,110,23,126,23,171,7,151"
+        [matMenuTriggerFor]="Microwave_Vent"
+      /> -->
     </map>
-    <map name="microwave_map_2">
+
+    <mat-menu #Microwave_Vent="matMenu">
+      <div mat-menu-item>Check For Dust</div>
+    </mat-menu>
+    <!-- <map name="microwave_map_2">
       <area
         shape="poly"
         coords="100,100,200,200,300,300"
         [matMenuTriggerFor]="MicrowaveMenu"
       />
-    </map>
+    </map> -->
     <!-- <button>Nuke It...</button> -->
   </div>
 </div>
@@ -247,3 +275,39 @@
   <div mat-menu-item>Check Microwave</div>
   <div mat-menu-item>Nuke It...</div>
 </mat-menu>
+
+<ng-template #StartMicrowave>
+  <button mat-raised-button>Start Microwave</button>
+</ng-template>
+
+<ng-template #MicrowaveVentTemplate>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-y: hidden;
+      width: 125px;
+    "
+  >
+    <div>Check Vent</div>
+    <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #MicrowaveInteriorTemplate>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-y: hidden;
+      width: 125px;
+    "
+  >
+    <div>Check Interior</div>
+    <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
+  </div>
+</ng-template>

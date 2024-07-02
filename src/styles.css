@@ -13,10 +13,26 @@ body {
   box-sizing: border-box;
 }
 
+div {
+  color: white;
+}
+
 .custom-dialog div.mat-mdc-dialog-surface {
   background-color: cyan;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
+}
+
+.custom-dialog-action-list div.mat-mdc-dialog-surface {
+  background-color: black;
+  border-radius: 0.5rem;
+  padding: 0;
+}
+
+.custom-dialog-action-list mat-dialog-container {
+  min-width: 125px;
+  width: 125px;
+  margin: auto;
 }
 
 button.mat-mdc-raised-button {
