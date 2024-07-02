@@ -2,6 +2,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: 25vw repeat(3, minmax(0, 1fr)) 25vw;
+  grid-template-rows: 25vh repeat(3, minmax(0, 1fr)) 25vh;
   gap: 1rem;
   background-color: teal;
 }
@@ -14,7 +15,8 @@
   height: calc(100vh - 32px);
 }
 
-.sidebar > .header {
+.sidebar > .header,
+.sidebar > .footer {
   background-color: black;
   display: flex;
   flex-direction: row;
@@ -22,6 +24,11 @@
   justify-content: space-between;
   padding: 0px 0.5rem;
 }
+
+.end-sidebar {
+  height: 100%;
+}
+
 .people-list {
   display: flex;
   flex-direction: column;
@@ -40,12 +47,16 @@
   padding: 0.5rem;
 }
 
+.end-sidebar .person-entry {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .microwave-container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  grid-column: 2 / span 3;
+  grid-area: 2 / 2 / span 3 / span 3;
 }
 
 div.microwave {
@@ -191,6 +202,10 @@ area {
   color: crimson;
 }
 
+.button-timer {
+  color: seagreen;
+}
+
 .button-skip {
   color: cyan;
 }
@@ -200,6 +215,88 @@ area {
 }
 
 button.button-remove-person:disabled,
+button.button-timer:disabled,
 button.button-skip:disabled {
   color: dimgray;
+}
+
+.button-shuffle {
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.button-shuffle:hover {
+  background-color: seagreen;
+}
+
+.clock-container {
+  grid-area: 1 / 2 / span 1 / span 3;
+}
+
+.clock {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: white;
+  margin: 0 auto;
+  position: relative;
+  display: none;
+}
+
+:host {
+  --second: 1s;
+  --minute: calc(var(--second) * 60);
+  --hour: calc(var(--minute) * 60);
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.second.hand {
+  animation: rotate steps(60) var(--minute) infinite;
+}
+
+.minute.hand {
+  animation: rotate linear var(--hour) infinite;
+}
+
+.hour.hand {
+  animation: rotate linear calc(var(--hour) * 12) infinite;
+}
+
+.second {
+  --width: 5px;
+  --height: 90px;
+  --color: red;
+  /* clip-path: polygon(0 0, 0 5px, 5px 85px, 3px 90px, 0 85px); */
+  clip-path: polygon(0 85px, 3px 90px, 5px 85px, 0 5px, 0 0);
+}
+.minute {
+  --width: 7px;
+  --height: 60px;
+  --color: blue;
+  clip-path: polygon(0 55px, 4px 90px, 7px 55px, 0 7px, 0 0);
+}
+.hour {
+  --width: 7px;
+  --height: 33px;
+  --color: darkblue;
+  clip-path: polygon(0 55px, 4px 90px, 7px 55px, 0 7px, 0 0);
+}
+.hand {
+  position: absolute;
+  top: 50%;
+  left: calc(50% - var(--width) / 2);
+  width: var(--width);
+  height: var(--height);
+  background-color: var(--color);
+  transform-origin: center 0;
+  border-radius: 4px;
 }

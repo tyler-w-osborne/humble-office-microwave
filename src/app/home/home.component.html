@@ -37,8 +37,8 @@
             grid-column: 2 / span 2;
           "
         >
-          <div>{{ person.Name }}</div>
-          <div>
+          <div>{{ person.Name | uppercase }}</div>
+          <div style="color: chartreuse">
             {{ person.Minutes }} :
             {{
               !!person.Seconds && person.Seconds.toString().length < 2
@@ -60,7 +60,11 @@
         >
           <button
             mat-icon-button
-            style="color: seagreen"
+            class="button-timer"
+            [disabled]="
+              People.Selected.Person !== person ||
+              Configuration.CookStatus !== CookStatusEnum.Idle
+            "
             (click)="Timer.Launch(person)"
           >
             <mat-icon>schedule</mat-icon>
@@ -68,7 +72,10 @@
           <button
             mat-icon-button
             class="button-skip"
-            [disabled]="person.Completed !== CompletionEnum.NA"
+            [disabled]="
+              People.Selected.Person !== person ||
+              person.Completed !== CompletionEnum.NA
+            "
             (click)="Actions.Skip(person)"
           >
             <mat-icon>skip_next</mat-icon>
@@ -76,7 +83,10 @@
           <button
             mat-icon-button
             class="button-complete"
-            [disabled]="person.Completed !== CompletionEnum.NA"
+            [disabled]="
+              People.Selected.Person !== person ||
+              person.Completed !== CompletionEnum.NA
+            "
             (click)="Actions.Complete(person)"
           >
             <mat-icon>verified</mat-icon>
@@ -84,6 +94,21 @@
         </div>
       </div>
       }
+    </div>
+    <div class="footer">
+      <div
+        class="button-shuffle"
+        (click)="Microwave.Shuffle(); Microwave.Start()"
+      >
+        Shuffle & Start
+      </div>
+    </div>
+  </div>
+  <div class="clock-container">
+    <div class="clock">
+      <div class="second hand"></div>
+      <div class="minute hand"></div>
+      <div class="hour hand"></div>
     </div>
   </div>
   <div class="microwave-container">
@@ -99,12 +124,12 @@
       <area
         shape="poly"
         coords="7,110,23,126,23,171,7,151"
-        (click)="Microwave.LaunchMenu($event, 'Vent')"
+        (click)="Microwave.Search($event, 'Vent')"
       />
       <area
         shape="poly"
         coords="79,79,251,69,248,164,82,176"
-        (click)="Microwave.LaunchMenu($event, 'Interior')"
+        (click)="Microwave.Search($event, 'Interior')"
       />
       <!-- <area
         shape="poly"
@@ -125,6 +150,98 @@
     </map> -->
     <!-- <button>Nuke It...</button> -->
   </div>
+  @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
+  <div class="sidebar end-sidebar" style="grid-area: 1 / 5 / span 1 / span 1">
+    <div class="header">
+      <div>Cookin</div>
+      <button
+        mat-icon-button
+        (click)="Microwave.Shuffle()"
+        matTooltip="Re-Shuffle"
+      >
+        <mat-icon>shuffle</mat-icon>
+      </button>
+    </div>
+    <div class="people-list">
+      @for (person of Microwave.List; track person) {
+      <div
+        class="person-entry"
+        [style.background-color]="$first ? 'blueviolet' : 'salmon'"
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.25rem;
+            grid-column: 1 / span 2;
+          "
+        >
+          <div>{{ person.Name | uppercase }}</div>
+          <div style="color: chartreuse">
+            {{ person.Minutes }} :
+            {{
+              !!person.Seconds && person.Seconds.toString().length < 2
+                ? "0" + person.Seconds.toString()
+                : person.Seconds
+            }}
+          </div>
+          <!--Actions-->
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-between;
+              gap: 0.25rem;
+            "
+          >
+            <button
+              mat-icon-button
+              class="button-skip"
+              [disabled]="
+                !$first ||
+                [CookStatusEnum.Idle].includes(Configuration.CookStatus)
+              "
+              (click)="Actions.Skip(person)"
+            >
+              <mat-icon>skip_next</mat-icon>
+            </button>
+            @if (person.Completed === CompletionEnum.NA) {
+            <button
+              mat-icon-button
+              class="button-complete"
+              [disabled]="
+                !$first ||
+                [CookStatusEnum.Idle].includes(Configuration.CookStatus)
+              "
+              matTooltip="Nuke it..."
+              (click)="Actions.Start(person)"
+            >
+              <mat-icon>start</mat-icon>
+            </button>
+            } @else if (person.Completed === CompletionEnum.InProgress) {
+            <button
+              mat-icon-button
+              class="button-complete"
+              [disabled]="
+                !$first ||
+                [CookStatusEnum.Idle].includes(Configuration.CookStatus)
+              "
+              matTooltip="Use Radaway"
+              (click)="Actions.Complete(person)"
+            >
+              <mat-icon>verified</mat-icon>
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
 </div>
 
 <ng-template #AddPersonTemplate>

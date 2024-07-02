@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const Materials = [
   MatButtonModule,
@@ -21,6 +22,7 @@ const Materials = [
   MatIconModule,
   MatMenuModule,
   MatToolbarModule,
+  MatTooltipModule,
 ];
 
 @NgModule({

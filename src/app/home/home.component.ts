@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -14,7 +14,7 @@ import { MaterialsModule } from '../materials/materials.module';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, MaterialsModule, NgTemplateOutlet],
+  imports: [FormsModule, MaterialsModule, NgTemplateOutlet, UpperCasePipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -224,8 +224,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
       person.Completed = Completion.Skipped;
       console.log(person);
     },
+    Start: (person: Person) => {
+      person.Completed = Completion.InProgress;
+    },
     Complete: (person: Person) => {
       person.Completed = Completion.Completed;
+      const person_index = this.Microwave.List.findIndex(
+        (person_entry) => person_entry.Name === person.Name
+      );
+      if (person_index !== -1) {
+        this.Microwave.List.splice(person_index, 1);
+      }
+      if (this.Microwave.List.length === 0) {
+        this.Configuration.CookStatus = CookStatus.Completed;
+      }
     },
   };
 
@@ -235,7 +247,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   microwave_interior_ref: TemplateRef<any>;
 
   Microwave = {
-    LaunchMenu: (mouse_event: MouseEvent, menu: 'Vent' | 'Interior') => {
+    List: <Person[]>[],
+    Search: (mouse_event: MouseEvent, menu: 'Vent' | 'Interior') => {
       mouse_event.preventDefault();
       mouse_event.stopPropagation();
       let template_ref: TemplateRef<any>;
@@ -259,15 +272,34 @@ export class HomeComponent implements OnInit, AfterViewInit {
         width: '125px',
       });
     },
+    Shuffle: () => {
+      const person_list = this.People.List.map((person) => person);
+      for (let i = person_list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = person_list[i];
+        person_list[i] = person_list[j];
+        person_list[j] = temp;
+      }
+      this.Microwave.List = person_list;
+    },
+    Start: () => {
+      this.Configuration.CookStatus = CookStatus.Cookin;
+    },
   };
 
   get CompletionEnum(): typeof Completion {
     return Completion;
   }
 
+  CookStatusEnum: typeof CookStatus = CookStatus;
+
   alert(input: string) {
     alert(input);
   }
+
+  Configuration = {
+    CookStatus: <CookStatus>CookStatus.Idle,
+  };
 }
 
 enum LS_Key {
@@ -278,6 +310,12 @@ enum Completion {
   NA = 'N/A',
   Skipped = 'Skipped',
   InProgress = 'In Progress',
+  Completed = 'Completed',
+}
+
+enum CookStatus {
+  Idle = 'Idle',
+  Cookin = 'Cookin',
   Completed = 'Completed',
 }
 
