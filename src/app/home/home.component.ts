@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { MaterialsModule } from '../materials/materials.module';
 
@@ -19,7 +20,7 @@ import { MaterialsModule } from '../materials/materials.module';
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit, AfterViewInit {
-  constructor(private _dialog: MatDialog) {
+  constructor(private _dialog: MatDialog, private _snack: MatSnackBar) {
     this.People.Initialize();
   }
 
@@ -225,6 +226,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
       console.log(person);
     },
     Start: (person: Person) => {
+      if (this.Microwave.Sabotage.Vent || this.Microwave.Sabotage.Interior) {
+        this.Microwave.List.push(...this.Microwave.List.splice(0, 1));
+        this._snack.open(
+          `${
+            !!this.Microwave.Sabotage.Vent
+              ? 'There was too much debris in the vent...'
+              : ''
+          } ${
+            !!this.Microwave.Sabotage.Interior
+              ? 'A fork was left in the microwave...'
+              : ''
+          }`,
+          'OK',
+          { duration: 50000 }
+        );
+        return;
+      }
       person.Completed = Completion.InProgress;
     },
     Complete: (person: Person) => {
@@ -281,9 +299,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
         person_list[j] = temp;
       }
       this.Microwave.List = person_list;
+      this.Microwave.Sabotage.Execute(Sabotage.Random);
     },
     Start: () => {
       this.Configuration.CookStatus = CookStatus.Cookin;
+    },
+    Sabotage: {
+      Vent: <boolean>false,
+      Interior: <boolean>false,
+      Execute: (sabotage: Sabotage) => {
+        switch (sabotage) {
+          case Sabotage.Vent:
+            return;
+          case Sabotage.Interior:
+            return;
+          default: {
+            // random
+            this.Microwave.Sabotage.Vent = [true, false][
+              Math.floor(Math.random() * 2)
+            ];
+            this.Microwave.Sabotage.Interior = [true, false][
+              Math.floor(Math.random() * 2)
+            ];
+          }
+        }
+      },
     },
   };
 
@@ -317,6 +357,13 @@ enum CookStatus {
   Idle = 'Idle',
   Cookin = 'Cookin',
   Completed = 'Completed',
+}
+
+enum Sabotage {
+  Vent = 'Vent',
+  Interior = 'Interior',
+
+  Random = 'Random',
 }
 
 interface Person {

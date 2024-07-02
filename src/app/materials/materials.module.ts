@@ -11,6 +11,10 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import {
+  MAT_SNACK_BAR_DEFAULT_OPTIONS,
+  MatSnackBarModule,
+} from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -21,6 +25,7 @@ const Materials = [
   MatInputModule,
   MatIconModule,
   MatMenuModule,
+  MatSnackBarModule,
   MatToolbarModule,
   MatTooltipModule,
 ];
@@ -36,6 +41,10 @@ const Materials = [
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { floatLabel: 'always' },
+    },
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
+      useValue: { panelClass: 'custom-snackbar' },
     },
   ],
   exports: Materials,

@@ -35,6 +35,11 @@ div {
   margin: auto;
 }
 
+.custom-snackbar {
+  background-color: black;
+  color: white;
+}
+
 button.mat-mdc-raised-button {
   border-radius: 0.5rem;
 }
