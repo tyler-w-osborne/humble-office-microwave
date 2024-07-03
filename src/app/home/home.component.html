@@ -406,9 +406,13 @@
       justify-content: space-between;
       overflow-y: hidden;
       width: 125px;
+      gap: 1rem;
     "
   >
-    <div>Check Vent</div>
+    <div class="part-button" (click)="Microwave.Sabotage.Fix(Parts.Vent)">
+      <mat-icon>handyman</mat-icon>
+      Check Vent
+    </div>
     <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
   </div>
 </ng-template>
@@ -424,7 +428,10 @@
       width: 125px;
     "
   >
-    <div>Check Interior</div>
+    <div class="part-button" (click)="Microwave.Sabotage.Fix(Parts.Interior)">
+      <mat-icon>handyman</mat-icon>
+      Check Interior
+    </div>
     <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
   </div>
 </ng-template>

@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import {
   MAT_SNACK_BAR_DEFAULT_OPTIONS,
+  MatSnackBarConfig,
   MatSnackBarModule,
 } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -44,7 +45,10 @@ const Materials = [
     },
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
-      useValue: { panelClass: 'custom-snackbar' },
+      useValue: <MatSnackBarConfig>{
+        panelClass: 'custom-snackbar',
+        duration: 3000,
+      },
     },
   ],
   exports: Materials,

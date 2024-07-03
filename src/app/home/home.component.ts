@@ -226,6 +226,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       console.log(person);
     },
     Start: (person: Person) => {
+      this._dialog.closeAll();
       if (this.Microwave.Sabotage.Vent || this.Microwave.Sabotage.Interior) {
         this.Microwave.List.push(...this.Microwave.List.splice(0, 1));
         this._snack.open(
@@ -239,8 +240,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
               : ''
           }`,
           'OK',
-          { duration: 50000 }
+          { duration: 3000 }
         );
+        new Audio('assets/sounds/boom.mp3').play();
         return;
       }
       person.Completed = Completion.InProgress;
@@ -315,13 +317,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
             return;
           default: {
             // random
-            this.Microwave.Sabotage.Vent = [true, false][
-              Math.floor(Math.random() * 2)
+            this.Microwave.Sabotage.Vent = [true /*, false*/][
+              Math.floor(Math.random() * 1)
             ];
-            this.Microwave.Sabotage.Interior = [true, false][
-              Math.floor(Math.random() * 2)
+            this.Microwave.Sabotage.Interior = [true /*, false*/][
+              Math.floor(Math.random() * 1)
             ];
           }
+        }
+      },
+      Fix: (part: Sabotage) => {
+        switch (part) {
+          case Sabotage.Vent:
+            if (this.Microwave.Sabotage.Vent) {
+              this._snack.open(
+                `There was a large amount of debris in the vent...suspicious`
+              );
+              this.Microwave.Sabotage.Vent = false;
+            }
+            break;
+          case Sabotage.Interior:
+            this.Microwave.Sabotage.Interior = false;
         }
       },
     },
@@ -332,6 +348,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   CookStatusEnum: typeof CookStatus = CookStatus;
+
+  Parts: typeof Sabotage = Sabotage;
 
   alert(input: string) {
     alert(input);

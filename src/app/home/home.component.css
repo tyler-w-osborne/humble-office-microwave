@@ -300,3 +300,21 @@ button.button-skip:disabled {
   transform-origin: center 0;
   border-radius: 4px;
 }
+
+.part-button {
+  background-color: rgb(90, 13, 13);
+  color: white;
+  border-radius: 4px;
+  padding: 4px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.part-button:hover {
+  filter: brightness(1.2);
+}

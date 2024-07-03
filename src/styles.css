@@ -35,7 +35,7 @@ div {
   margin: auto;
 }
 
-.custom-snackbar {
+mat-snack-bar-container.custom-snackbar > div.mat-mdc-snackbar-surface {
   background-color: black;
   color: white;
 }
