@@ -38,14 +38,14 @@
           "
         >
           <div>{{ person.Name | uppercase }}</div>
-          <div style="color: chartreuse">
+          <!-- <div style="color: chartreuse">
             {{ person.Minutes }} :
             {{
               !!person.Seconds && person.Seconds.toString().length < 2
                 ? "0" + person.Seconds.toString()
                 : person.Seconds
             }}
-          </div>
+          </div> -->
         </div>
 
         <!--Actions-->
@@ -58,6 +58,14 @@
             gap: 0.25rem;
           "
         >
+          <div style="color: chartreuse">
+            {{ person.Minutes }} :
+            {{
+              !!person.Seconds && person.Seconds.toString().length < 2
+                ? "0" + person.Seconds.toString()
+                : person.Seconds
+            }}
+          </div>
           <button
             mat-icon-button
             class="button-timer"
@@ -69,7 +77,7 @@
           >
             <mat-icon>schedule</mat-icon>
           </button>
-          <button
+          <!-- <button
             mat-icon-button
             class="button-skip"
             [disabled]="
@@ -90,7 +98,7 @@
             (click)="Actions.Complete(person)"
           >
             <mat-icon>verified</mat-icon>
-          </button>
+          </button> -->
         </div>
       </div>
       }
