@@ -30,8 +30,8 @@ div {
 }
 
 .custom-dialog-action-list mat-dialog-container {
-  min-width: 125px;
-  width: 125px;
+  /* min-width: 125px;
+  width: 125px; */
   margin: auto;
 }
 

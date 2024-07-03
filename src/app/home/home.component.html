@@ -132,12 +132,32 @@
       <area
         shape="poly"
         coords="7,110,23,126,23,171,7,151"
-        (click)="Microwave.Search($event, 'Vent')"
+        [style.cursor]="
+          Configuration.CookStatus === CookStatusEnum.Cookin &&
+          !Microwave.List[0].Checked.includes(Parts.Vent)
+            ? 'pointer'
+            : 'auto'
+        "
+        (click)="
+          !Microwave.List[0].Checked.includes(Parts.Vent)
+            ? Microwave.Search($event, 'Vent')
+            : null
+        "
       />
       <area
         shape="poly"
         coords="79,79,251,69,248,164,82,176"
-        (click)="Microwave.Search($event, 'Interior')"
+        [style.cursor]="
+          Configuration.CookStatus === CookStatusEnum.Cookin &&
+          !Microwave.List[0].Checked.includes(Parts.Interior)
+            ? 'pointer'
+            : 'auto'
+        "
+        (click)="
+          !Microwave.List[0].Checked.includes(Parts.Interior)
+            ? Microwave.Search($event, 'Interior')
+            : null
+        "
       />
       <!-- <area
         shape="poly"
@@ -402,7 +422,10 @@
 </mat-menu>
 
 <ng-template #StartMicrowave>
-  <button mat-raised-button>Start Microwave</button>
+  <div class="part-button nuke" (click)="Actions.Start(null)">
+    <mat-icon>thumb_up_alt</mat-icon>
+    Nuke it...
+  </div>
 </ng-template>
 
 <ng-template #MicrowaveVentTemplate>
@@ -413,13 +436,34 @@
       align-items: center;
       justify-content: space-between;
       overflow-y: hidden;
-      width: 125px;
+      width: 100%;
       gap: 1rem;
+      padding: 1rem;
     "
   >
-    <div class="part-button" (click)="Microwave.Sabotage.Fix(Parts.Vent)">
+    <div
+      class="part-button search"
+      [class.checked]="Microwave.List[0].Checked.includes(Parts.Vent)"
+      (click)="
+        !Microwave.List[0].Checked.includes(Parts.Vent)
+          ? Microwave.Sabotage.Fix(Parts.Vent)
+          : null
+      "
+    >
       <mat-icon>handyman</mat-icon>
-      Check Vent
+      {{
+        Microwave.List[0].Checked.includes(Parts.Vent)
+          ? "Vent Checked"
+          : "Check Vent for dust"
+      }}
+    </div>
+    <div
+      class="part-button sabotage"
+      [class.enabled]="Microwave.Sabotage.Reminders.includes(Parts.Vent)"
+      (click)="Microwave.Sabotage.ChangeReminders(Parts.Vent)"
+    >
+      <mat-icon>local_fire_department</mat-icon>
+      Stuff vent with gas soaked lint...
     </div>
     <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
   </div>
@@ -433,12 +477,34 @@
       align-items: center;
       justify-content: space-between;
       overflow-y: hidden;
-      width: 125px;
+      width: 100%;
+      gap: 1rem;
+      padding: 1rem;
     "
   >
-    <div class="part-button" (click)="Microwave.Sabotage.Fix(Parts.Interior)">
+    <div
+      class="part-button search"
+      [class.checked]="Microwave.List[0].Checked.includes(Parts.Interior)"
+      (click)="
+        !Microwave.List[0].Checked.includes(Parts.Interior)
+          ? Microwave.Sabotage.Fix(Parts.Interior)
+          : null
+      "
+    >
       <mat-icon>handyman</mat-icon>
-      Check Interior
+      {{
+        Microwave.List[0].Checked.includes(Parts.Interior)
+          ? "Interior Checked"
+          : "Check Interior"
+      }}
+    </div>
+    <div
+      class="part-button sabotage"
+      [class.enabled]="Microwave.Sabotage.Reminders.includes(Parts.Interior)"
+      (click)="Microwave.Sabotage.ChangeReminders(Parts.Interior)"
+    >
+      <mat-icon>radio</mat-icon>
+      Hide piece of metal inside...
     </div>
     <ng-container *ngTemplateOutlet="StartMicrowave"></ng-container>
   </div>

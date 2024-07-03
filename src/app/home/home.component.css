@@ -70,6 +70,7 @@ div.microwave {
 img.microwave {
   height: 226px;
   width: 350px;
+  user-select: none;
 }
 
 .digit-container {
@@ -302,7 +303,6 @@ button.button-skip:disabled {
 }
 
 .part-button {
-  background-color: rgb(90, 13, 13);
   color: white;
   border-radius: 4px;
   padding: 4px;
@@ -317,4 +317,30 @@ button.button-skip:disabled {
 
 .part-button:hover {
   filter: brightness(1.2);
+}
+
+.part-button.search {
+  background-color: rgb(90, 13, 13);
+}
+
+.part-button.search.checked {
+  background-color: grey;
+  cursor: auto;
+}
+
+.part-button.nuke {
+  background-color: seagreen;
+}
+
+.part-button.sabotage {
+  user-select: none;
+  background-color: coral;
+}
+
+.part-button.sabotage:hover {
+  filter: none;
+}
+
+.part-button.sabotage.enabled > mat-icon {
+  color: seagreen;
 }

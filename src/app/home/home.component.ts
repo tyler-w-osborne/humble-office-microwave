@@ -70,6 +70,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             Minutes: null,
             Seconds: null,
             Completed: Completion.NA,
+            Checked: [],
           });
           this.People.Set_Storage();
         }
@@ -245,6 +246,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         new Audio('assets/sounds/boom.mp3').play();
         return;
       }
+      if (!!!person) {
+        person = this.Microwave.List[0];
+      }
       person.Completed = Completion.InProgress;
     },
     Complete: (person: Person) => {
@@ -257,6 +261,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
       if (this.Microwave.List.length === 0) {
         this.Configuration.CookStatus = CookStatus.Completed;
+      }
+      if (this.Microwave.Sabotage.Reminders.includes(Sabotage.Vent)) {
+        this.Microwave.Sabotage.Reminders.splice(
+          this.Microwave.Sabotage.Reminders.findIndex(
+            (reminder) => reminder === Sabotage.Vent
+          ),
+          1
+        );
+        this.Microwave.Sabotage.Vent = true;
+      }
+
+      if (this.Microwave.Sabotage.Reminders.includes(Sabotage.Interior)) {
+        this.Microwave.Sabotage.Reminders.splice(
+          this.Microwave.Sabotage.Reminders.findIndex(
+            (reminder) => reminder === Sabotage.Interior
+          ),
+          1
+        );
+        this.Microwave.Sabotage.Interior = true;
       }
     },
   };
@@ -271,6 +294,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     Search: (mouse_event: MouseEvent, menu: 'Vent' | 'Interior') => {
       mouse_event.preventDefault();
       mouse_event.stopPropagation();
+      if (
+        [CookStatus.Idle, CookStatus.Completed].includes(
+          this.Configuration.CookStatus
+        )
+      ) {
+        return;
+      }
       let template_ref: TemplateRef<any>;
       switch (menu) {
         case 'Vent':
@@ -289,7 +319,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           left: `${mouse_event.clientX}px`,
           top: `${mouse_event.clientY}px`,
         },
-        width: '125px',
+        width: '250px',
       });
     },
     Shuffle: () => {
@@ -309,6 +339,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     Sabotage: {
       Vent: <boolean>false,
       Interior: <boolean>false,
+      Reminders: <Sabotage[]>[],
       Execute: (sabotage: Sabotage) => {
         switch (sabotage) {
           case Sabotage.Vent:
@@ -339,6 +370,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
           case Sabotage.Interior:
             this.Microwave.Sabotage.Interior = false;
         }
+        this.Microwave.List[0].Checked.push(part);
+      },
+      ChangeReminders: (part_to_sabotage: Sabotage) => {
+        if (this.Microwave.Sabotage.Reminders.includes(part_to_sabotage)) {
+          this.Microwave.Sabotage.Reminders.splice(
+            this.Microwave.Sabotage.Reminders.findIndex(
+              (reminder) => reminder === part_to_sabotage
+            ),
+            1
+          );
+          console.log(this.Microwave.Sabotage.Reminders);
+          return;
+        }
+        this.Microwave.Sabotage.Reminders.push(part_to_sabotage);
+        console.log(this.Microwave.Sabotage.Reminders);
       },
     },
   };
@@ -389,4 +435,5 @@ interface Person {
   Minutes: number;
   Seconds: number;
   Completed: Completion;
+  Checked: Sabotage[];
 }
