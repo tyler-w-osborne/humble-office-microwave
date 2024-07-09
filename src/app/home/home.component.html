@@ -40,14 +40,6 @@
           "
         >
           <div>{{ person.Name | uppercase }}</div>
-          <!-- <div style="color: chartreuse">
-            {{ person.Minutes }} :
-            {{
-              !!person.Seconds && person.Seconds.toString().length < 2
-                ? "0" + person.Seconds.toString()
-                : person.Seconds
-            }}
-          </div> -->
         </div>
 
         <!--Actions-->
@@ -63,10 +55,15 @@
           <div style="color: chartreuse">
             {{ person.Minutes }} :
             {{
+              Configuration.DigitSplit(person.Minutes, person.Seconds)
+                .slice(2, 4)
+                .join("")
+            }}
+            <!-- {{
               !!person.Seconds && person.Seconds.toString().length < 2
                 ? "0" + person.Seconds.toString()
                 : person.Seconds
-            }}
+            }} -->
           </div>
           <button
             mat-icon-button
@@ -266,9 +263,9 @@
           <div style="color: chartreuse">
             {{ person.Minutes }} :
             {{
-              !!person.Seconds && person.Seconds.toString().length < 2
-                ? "0" + person.Seconds.toString()
-                : person.Seconds
+              Configuration.DigitSplit(person.Minutes, person.Seconds)
+                .slice(2, 4)
+                .join("")
             }}
           </div>
           <!--Actions-->

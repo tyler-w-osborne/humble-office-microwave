@@ -146,7 +146,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             break;
           case 1:
             this.Timer.Code[1] = minute_digits[0];
-            console.log(this.Timer.Code);
             break;
         }
       }
@@ -155,6 +154,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           .toString()
           .split('')
           .map((digit) => Number(digit));
+        console.log(second_digits);
         switch (second_digits.length) {
           case 2:
             this.Timer.Code[2] = second_digits[0];
@@ -165,6 +165,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.Timer.Code[3] = second_digits[0];
             break;
         }
+      } else {
+        this.Timer.Code[2] = 0;
+        this.Timer.Code[3] = 0;
       }
     },
     Launch: (person: Person) => {
@@ -177,8 +180,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
           if (!!should_save) {
             console.log(this.Timer.Code);
             console.log(
-              Number(this.Timer.Code.slice(0, 2).join('')),
-              Number(this.Timer.Code.slice(2, 4).join(''))
+              Number(
+                this.Timer.Code.slice(0, 2)
+                  .filter((digit) => !!digit)
+                  .join('')
+              ),
+              Number(
+                this.Timer.Code.slice(2, 4)
+                  .filter((digit) => !!digit)
+                  .join('')
+              )
             );
             this.People.Selected.Set_Time(
               Number(this.Timer.Code.slice(0, 2).join('')),
@@ -202,40 +213,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     ClearTime: () => {
       this.Timer.Code = [null, null, null, null];
     },
-    DigitSplit: (
-      minutes: number,
-      seconds: number
-    ): [number, number, number, number] => {
-      const digit_array = <[number, number, number, number]>[
-        null,
-        null,
-        null,
-        null,
-      ];
-      const str_minutes = `${minutes}`;
-      if (str_minutes.length >= 2) {
-        digit_array.splice(
-          0,
-          2,
-          Number(str_minutes[0]),
-          Number(str_minutes[1])
-        );
-      } else {
-        digit_array.splice(1, 1, minutes);
-      }
-      const str_seconds = `${seconds}`;
-      if (str_seconds.length >= 2) {
-        digit_array.splice(
-          2,
-          2,
-          Number(str_seconds[0]),
-          Number(str_seconds[1])
-        );
-      } else {
-        digit_array.splice(3, seconds);
-      }
-      return digit_array;
-    },
   };
 
   Actions = {
@@ -257,6 +234,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.Configuration.CookStatus = CookStatus.Completed;
         this.Configuration.Set_Storage();
       }
+      this.Microwave.StartTime.Initialize();
       console.log(person);
     },
     Start: (person: Person) => {
@@ -276,7 +254,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           'OK',
           { duration: 3000 }
         );
-        new Audio('assets/sounds/boom.mp3').play();
+        this.Configuration.Sound.Set('assets/sounds/boom.mp3');
         this.Microwave.Sabotage.Vent = false;
         this.Microwave.Sabotage.Interior = false;
         return;
@@ -287,7 +265,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       person.Completed = Completion.InProgress;
       this.Microwave.List[0].Completed = Completion.InProgress;
       this.People.Set_Storage();
-      new Audio('assets/sounds/radiation_whir.ogg').play();
+      this.Configuration.Sound.Set('assets/sounds/radiation_whir.ogg');
     },
     Complete: (person: Person) => {
       person.Completed = Completion.Completed;
@@ -326,6 +304,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.People.List[person_entry_index].Completed = Completion.Completed;
       this.People.List[person_entry_index].Checked = [];
       this.People.Set_Storage();
+      this.Microwave.StartTime.Initialize();
     },
   };
 
@@ -511,6 +490,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
     },
     Set_Storage: () => {
       localStorage.setItem('Cook_Status', this.Configuration.CookStatus);
+    },
+    DigitSplit: (
+      minutes: number,
+      seconds: number
+    ): [number, number, number, number] => {
+      const digit_array = <[number, number, number, number]>[0, 0, 0, 0];
+      const split_minutes = `${minutes}`
+        .split('')
+        .map((digit) => Number(digit));
+      const split_seconds = `${seconds}`
+        .split('')
+        .map((digit) => Number(digit));
+      digit_array.splice(
+        2 - split_minutes.length,
+        split_minutes.length,
+        ...split_minutes
+      );
+      digit_array.splice(
+        4 - split_seconds.length,
+        split_seconds.length,
+        ...split_seconds
+      );
+      return digit_array;
+    },
+    Sound: {
+      CurrentSound: <HTMLAudioElement>null,
+      Set: (audio_link: string) => {
+        if (!!this.Configuration.Sound.CurrentSound) {
+          this.Configuration.Sound.CurrentSound.pause();
+          this.Configuration.Sound.CurrentSound = null;
+        }
+        this.Configuration.Sound.CurrentSound = new Audio(audio_link);
+        this.Configuration.Sound.CurrentSound.play();
+      },
     },
   };
 }
