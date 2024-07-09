@@ -344,3 +344,11 @@ button.button-skip:disabled {
 .part-button.sabotage.enabled > mat-icon {
   color: seagreen;
 }
+
+.cook-start-time {
+  grid-column: 3 / span 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background-color: black; */
+}

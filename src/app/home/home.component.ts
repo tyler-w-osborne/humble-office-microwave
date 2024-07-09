@@ -3,12 +3,17 @@ import {
   AfterViewInit,
   Component,
   OnInit,
+  Signal,
   TemplateRef,
   ViewChild,
+  WritableSignal,
+  computed,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DateTime } from 'luxon';
 import { firstValueFrom } from 'rxjs';
 import { MaterialsModule } from '../materials/materials.module';
 
@@ -22,9 +27,12 @@ import { MaterialsModule } from '../materials/materials.module';
 export class HomeComponent implements OnInit, AfterViewInit {
   constructor(private _dialog: MatDialog, private _snack: MatSnackBar) {
     this.People.Initialize();
+    this.Microwave.StartTime.Initialize();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.Configuration.Initialize();
+  }
 
   ngAfterViewInit(): void {
     // const _tyler = this.People.List.find(
@@ -49,7 +57,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.People.Set_Storage();
     },
     Set_Storage: () => {
-      localStorage.setItem(LS_Key.People, JSON.stringify(this.People.List));
+      localStorage.setItem(
+        LS_Key.People,
+        JSON.stringify(
+          this.People.List.map((person) => {
+            person.Checked = [];
+            return person;
+          })
+        )
+      );
     },
     Add_Person: {
       Name: <string>'',
@@ -84,7 +100,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (person_index !== -1) {
         this.People.List.splice(person_index, 1);
         this.People.Set_Storage();
-        new Audio('../assets/dumpster.ogg').play();
+        new Audio('../assets/sounds/dumpster.ogg').play();
       }
     },
     Selected: {
@@ -108,6 +124,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     Reset: () => {
       for (let i = 0; i < this.People.List.length; i++) {
         this.People.List[i].Completed = Completion.NA;
+        this.People.List[i].Checked = [];
       }
       this.People.Set_Storage();
     },
@@ -224,6 +241,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
   Actions = {
     Skip: (person: Person) => {
       person.Completed = Completion.Skipped;
+      const person_index = this.People.List.findIndex(
+        (person_entry) => person_entry.Name === person.Name
+      );
+      if (person_index !== -1) {
+        this.People.List[person_index].Completed = Completion.Skipped;
+        this.People.List[person_index].Checked = [];
+        this.People.Set_Storage();
+      }
+      this.Microwave.List.splice(
+        this.Microwave.List.findIndex((entry) => entry.Name === person.Name),
+        1
+      );
+      if (this.Microwave.List.length === 0) {
+        this.Configuration.CookStatus = CookStatus.Completed;
+        this.Configuration.Set_Storage();
+      }
       console.log(person);
     },
     Start: (person: Person) => {
@@ -244,12 +277,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
           { duration: 3000 }
         );
         new Audio('assets/sounds/boom.mp3').play();
+        this.Microwave.Sabotage.Vent = false;
+        this.Microwave.Sabotage.Interior = false;
         return;
       }
       if (!!!person) {
         person = this.Microwave.List[0];
       }
       person.Completed = Completion.InProgress;
+      this.Microwave.List[0].Completed = Completion.InProgress;
+      this.People.Set_Storage();
+      new Audio('assets/sounds/radiation_whir.ogg').play();
     },
     Complete: (person: Person) => {
       person.Completed = Completion.Completed;
@@ -261,6 +299,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
       if (this.Microwave.List.length === 0) {
         this.Configuration.CookStatus = CookStatus.Completed;
+        this.Configuration.Set_Storage();
       }
       if (this.Microwave.Sabotage.Reminders.includes(Sabotage.Vent)) {
         this.Microwave.Sabotage.Reminders.splice(
@@ -281,6 +320,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         );
         this.Microwave.Sabotage.Interior = true;
       }
+      const person_entry_index = this.People.List.findIndex(
+        (people_entry) => people_entry.Name === person.Name
+      );
+      this.People.List[person_entry_index].Completed = Completion.Completed;
+      this.People.List[person_entry_index].Checked = [];
+      this.People.Set_Storage();
     },
   };
 
@@ -290,6 +335,37 @@ export class HomeComponent implements OnInit, AfterViewInit {
   microwave_interior_ref: TemplateRef<any>;
 
   Microwave = {
+    StartTime: {
+      Value: <WritableSignal<DateTime>>signal(null),
+      Initialize: () => {
+        let start_time = DateTime.now().set({
+          hour: 12,
+          minute: 0,
+          second: 0,
+        });
+        for (let i = 0; i < this.Microwave.List.length; i++) {
+          start_time = start_time.minus({
+            minutes: this.Microwave.List[i].Minutes,
+            seconds: this.Microwave.List[i].Seconds,
+          });
+        }
+        this.Microwave.StartTime.Value.set(start_time);
+      },
+      ToDigitArray: (): Signal<[number, number, number, number]> => {
+        return computed(() => {
+          const digit_array = <[number, number, number, number]>[0, 0, 0, 0];
+          const hours = `${this.Microwave.StartTime.Value().hour}`
+            .split('')
+            .map((digit) => Number(digit));
+          const minutes = `${this.Microwave.StartTime.Value().minute}`
+            .split('')
+            .map((digit) => Number(digit));
+          digit_array.splice(2 - hours.length, hours.length, ...hours);
+          digit_array.splice(4 - minutes.length, minutes.length, ...minutes);
+          return digit_array;
+        });
+      },
+    },
     List: <Person[]>[],
     Search: (mouse_event: MouseEvent, menu: 'Vent' | 'Interior') => {
       mouse_event.preventDefault();
@@ -323,7 +399,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
     },
     Shuffle: () => {
-      const person_list = this.People.List.map((person) => person);
+      const person_list = this.People.List.filter((person) =>
+        [Completion.NA, Completion.InProgress].includes(person.Completed)
+      ).map((person) => person);
       for (let i = person_list.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         const temp = person_list[i];
@@ -335,6 +413,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     },
     Start: () => {
       this.Configuration.CookStatus = CookStatus.Cookin;
+      this.Configuration.Set_Storage();
+      this.Microwave.StartTime.Initialize();
     },
     Sabotage: {
       Vent: <boolean>false,
@@ -348,12 +428,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
             return;
           default: {
             // random
-            this.Microwave.Sabotage.Vent = [true /*, false*/][
-              Math.floor(Math.random() * 1)
-            ];
-            this.Microwave.Sabotage.Interior = [true /*, false*/][
-              Math.floor(Math.random() * 1)
-            ];
+            const random_list = [true, false];
+            this.Microwave.Sabotage.Vent =
+              random_list[Math.floor(Math.random() * random_list.length)];
+            this.Microwave.Sabotage.Interior =
+              random_list[Math.floor(Math.random() * random_list.length)];
+            console.log(this.Microwave.Sabotage);
           }
         }
       },
@@ -362,12 +442,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
           case Sabotage.Vent:
             if (this.Microwave.Sabotage.Vent) {
               this._snack.open(
-                `There was a large amount of debris in the vent...suspicious`
+                `There was a large amount of gas soaked lint in the vent...suspicious`
               );
               this.Microwave.Sabotage.Vent = false;
             }
             break;
           case Sabotage.Interior:
+            if (this.Microwave.Sabotage.Interior) {
+              this._snack.open(
+                `A piece of metal was left in the microwave...what was that to I wonder?`
+              );
+            }
             this.Microwave.Sabotage.Interior = false;
         }
         this.Microwave.List[0].Checked.push(part);
@@ -387,6 +472,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log(this.Microwave.Sabotage.Reminders);
       },
     },
+    Reset: () => {
+      this.Configuration.CookStatus = CookStatus.Idle;
+      this.Configuration.Set_Storage();
+      this.Microwave.List = [];
+      this.Microwave.StartTime.Initialize();
+    },
   };
 
   get CompletionEnum(): typeof Completion {
@@ -403,6 +494,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   Configuration = {
     CookStatus: <CookStatus>CookStatus.Idle,
+    Initialize: () => {
+      const cook_status = localStorage.getItem('Cook_Status') as CookStatus;
+      if (!!cook_status) {
+        if (cook_status === CookStatus.Completed) {
+          this.Configuration.CookStatus = CookStatus.Idle;
+          return;
+        } else if (cook_status === CookStatus.Cookin) {
+          this.Microwave.Shuffle();
+          this.Microwave.Start();
+        }
+        this.Configuration.CookStatus = cook_status;
+        return;
+      }
+      this.Configuration.Set_Storage();
+    },
+    Set_Storage: () => {
+      localStorage.setItem('Cook_Status', this.Configuration.CookStatus);
+    },
   };
 }
 

@@ -2,9 +2,11 @@
   <div class="sidebar">
     <div class="header">
       <div>People</div>
-      <button mat-raised-button (click)="People.Reset()">
+      @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
+      <button mat-raised-button (click)="People.Reset(); Microwave.Reset()">
         Reset / New Day
       </button>
+      }
       <button mat-icon-button (click)="People.Add_Person.Execute()">
         <mat-icon>add</mat-icon>
       </button>
@@ -104,21 +106,73 @@
       }
     </div>
     <div class="footer">
+      @if (Configuration.CookStatus === CookStatusEnum.Idle) {
       <div
         class="button-shuffle"
-        (click)="Microwave.Shuffle(); Microwave.Start()"
+        (click)="People.Reset(); Microwave.Shuffle(); Microwave.Start()"
       >
         Shuffle & Start
       </div>
+      }
     </div>
   </div>
-  <div class="clock-container">
+  <div class="cook-start-time">
+    <div
+      style="
+        height: calc(50px + 1rem);
+        border: 1px solid white;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0px 1rem;
+        background-color: black;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+        "
+      >
+        @for (i of Microwave.StartTime.ToDigitArray()().slice(0, 2); track
+        $index) {
+        <ng-container
+          *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
+        ></ng-container>
+        }
+      </div>
+      <div style="color: white; font-weight: bolder; font-size: 2rem">:</div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+        "
+      >
+        @for (i of Microwave.StartTime.ToDigitArray()().slice(2, 4); track
+        $index) {
+        <ng-container
+          *ngTemplateOutlet="DigitalLetterTemplate; context: { digit: i }"
+        ></ng-container>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="clock-container">
     <div class="clock">
       <div class="second hand"></div>
       <div class="minute hand"></div>
       <div class="hour hand"></div>
     </div>
-  </div>
+  </div> -->
   <div class="microwave-container">
     <!--[matMenuTriggerFor]="MicrowaveMenu"-->
     <!-- <div class="microwave" usemap="#microwave_map_2"></div> -->
@@ -129,6 +183,7 @@
         coords="100, 100, 10"
         (click)="alert('you did it!')"
       /> -->
+      @if (Microwave.List.length > 0) {
       <area
         shape="poly"
         coords="7,110,23,126,23,171,7,151"
@@ -159,6 +214,7 @@
             : null
         "
       />
+      }
       <!-- <area
         shape="poly"
         coords="7,110,23,126,23,171,7,151"
