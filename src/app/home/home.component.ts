@@ -235,6 +235,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.Configuration.Set_Storage();
       }
       this.Microwave.StartTime.Initialize();
+      this.Configuration.Sound.Unset();
       console.log(person);
     },
     Start: (person: Person) => {
@@ -305,6 +306,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.People.List[person_entry_index].Checked = [];
       this.People.Set_Storage();
       this.Microwave.StartTime.Initialize();
+      this.Configuration.Sound.Unset();
     },
   };
 
@@ -517,12 +519,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     Sound: {
       CurrentSound: <HTMLAudioElement>null,
       Set: (audio_link: string) => {
+        this.Configuration.Sound.Unset();
+        this.Configuration.Sound.CurrentSound = new Audio(audio_link);
+        this.Configuration.Sound.CurrentSound.play();
+      },
+      Unset: () => {
         if (!!this.Configuration.Sound.CurrentSound) {
           this.Configuration.Sound.CurrentSound.pause();
           this.Configuration.Sound.CurrentSound = null;
         }
-        this.Configuration.Sound.CurrentSound = new Audio(audio_link);
-        this.Configuration.Sound.CurrentSound.play();
       },
     },
   };
