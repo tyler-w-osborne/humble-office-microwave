@@ -59,10 +59,11 @@
   align-items: center;
   justify-content: center;
   grid-area: 2 / 2 / span 3 / span 3;
+  position: relative;
 }
 
 div.microwave {
-  background-image: url("../../assets/microwave.png");
+  background-image: url("../../assets/microwave_2.png");
   background-size: contain;
   background-repeat: no-repeat;
   height: 200px;
@@ -73,6 +74,7 @@ img.microwave {
   height: 226px;
   width: 350px;
   user-select: none;
+  position: absolute;
 }
 
 .digit-container {
