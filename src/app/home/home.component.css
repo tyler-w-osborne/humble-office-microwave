@@ -26,7 +26,7 @@
 }
 
 .end-sidebar {
-  height: 100%;
+  grid-area: 1 / 5 / span 5 / span 1;
 }
 
 .people-list {
@@ -46,6 +46,7 @@
   cursor: pointer;
   padding: 0.5rem;
   background-color: var(--dark);
+  user-select: none;
 }
 
 .end-sidebar .person-entry {

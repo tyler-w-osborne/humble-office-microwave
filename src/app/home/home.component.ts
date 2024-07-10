@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateTime } from 'luxon';
 import { firstValueFrom } from 'rxjs';
@@ -68,12 +68,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       );
     },
     Add_Person: {
+      DialogRef: <MatDialogRef<any, boolean>>null,
       Name: <string>'',
       Execute: async () => {
-        const save = await firstValueFrom<boolean>(
-          this._dialog
-            .open(this.add_person_ref, { disableClose: true })
-            .afterClosed()
+        this.People.Add_Person.DialogRef = this._dialog.open(
+          this.add_person_ref,
+          { disableClose: true }
+        );
+        const save = await firstValueFrom(
+          this.People.Add_Person.DialogRef.afterClosed()
         );
         if (
           !!save &&
@@ -91,6 +94,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.People.Set_Storage();
         }
         this.People.Add_Person.Name = '';
+      },
+      Close: (save: boolean) => {
+        this.People.Add_Person.DialogRef.close(save);
       },
     },
     Remove_Person: (person: Person) => {
@@ -232,7 +238,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       );
       if (this.Microwave.List.length === 0) {
         this.Configuration.CookStatus = CookStatus.Completed;
-        this.Configuration.Set_Storage();
+        this.Configuration.Set_Storage('Actions-Skip');
       }
       this.Microwave.StartTime.Initialize();
       this.Configuration.Sound.Unset();
@@ -278,7 +284,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
       if (this.Microwave.List.length === 0) {
         this.Configuration.CookStatus = CookStatus.Completed;
-        this.Configuration.Set_Storage();
       }
       if (this.Microwave.Sabotage.Reminders.includes(Sabotage.Vent)) {
         this.Microwave.Sabotage.Reminders.splice(
@@ -307,6 +312,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.People.Set_Storage();
       this.Microwave.StartTime.Initialize();
       this.Configuration.Sound.Unset();
+      this.Configuration.Set_Storage('Actions-Complete');
     },
   };
 
@@ -390,12 +396,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         person_list[j] = temp;
       }
       this.Microwave.List = person_list;
-      this.Microwave.Sabotage.Execute(Sabotage.Random);
+      //this.Microwave.Sabotage.Execute(Sabotage.Random);
     },
     Start: () => {
       this.Configuration.CookStatus = CookStatus.Cookin;
-      this.Configuration.Set_Storage();
       this.Microwave.StartTime.Initialize();
+      this.Configuration.Set_Storage('microwave-start');
     },
     Sabotage: {
       Vent: <boolean>false,
@@ -455,8 +461,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     },
     Reset: () => {
       this.Configuration.CookStatus = CookStatus.Idle;
-      this.Configuration.Set_Storage();
       this.Microwave.List = [];
+      this.Configuration.Set_Storage('Microwave-Reset');
       this.Microwave.StartTime.Initialize();
     },
   };
@@ -476,34 +482,69 @@ export class HomeComponent implements OnInit, AfterViewInit {
   Configuration = {
     CookStatus: <CookStatus>CookStatus.Idle,
     Initialize: () => {
-      const cook_status = localStorage.getItem('Cook_Status') as CookStatus;
-      if (!!cook_status) {
-        if (cook_status === CookStatus.Completed) {
+      const last_configuration_string = localStorage.getItem('Configuration');
+      if (!!last_configuration_string) {
+        const last_configuration = JSON.parse(last_configuration_string) as {
+          Cook_Status: CookStatus;
+          Sabotage_Vent: boolean;
+          Sabotage_Interior: boolean;
+          Cook_Order: Person[];
+        };
+        if (last_configuration.Cook_Status === CookStatus.Completed) {
           this.Configuration.CookStatus = CookStatus.Idle;
+          this.Microwave.Sabotage.Vent = last_configuration.Sabotage_Vent;
+          this.Microwave.Sabotage.Interior =
+            last_configuration.Sabotage_Interior;
+          // if (!!last_configuration.Sabotage_Vent) {
+          //   this.Microwave.Sabotage.ChangeReminders(Sabotage.Vent);
+          // }
+          // if (!!last_configuration.Sabotage_Interior) {
+          //   this.Microwave.Sabotage.ChangeReminders(Sabotage.Interior);
+          // }
           return;
-        } else if (cook_status === CookStatus.Cookin) {
-          this.Microwave.Shuffle();
+        } else if (last_configuration.Cook_Status === CookStatus.Cookin) {
+          // this.Microwave.Shuffle()
+          const cook_order = last_configuration.Cook_Order.filter(
+            (person_entry) =>
+              !!this.People.List.find(
+                (person) => person.Name === person_entry.Name
+              )
+          );
+          this.Microwave.List = cook_order;
+          this.Microwave.Sabotage.Vent = last_configuration.Sabotage_Vent;
+          this.Microwave.Sabotage.Interior =
+            last_configuration.Sabotage_Interior;
           this.Microwave.Start();
         }
-        this.Configuration.CookStatus = cook_status;
+        this.Configuration.CookStatus = last_configuration.Cook_Status;
         return;
       }
-      this.Configuration.Set_Storage();
+      console.log('Random Sabotage');
+      this.Microwave.Sabotage.Execute(Sabotage.Random);
+      this.Configuration.Set_Storage('Configuration-Initialization');
     },
-    Set_Storage: () => {
-      localStorage.setItem('Cook_Status', this.Configuration.CookStatus);
+    Set_Storage: (from: string) => {
+      console.log('Configuration Set From:', from);
+      const configuration = {
+        Cook_Status: <CookStatus>this.Configuration.CookStatus,
+        Sabotage_Vent: <boolean>this.Microwave.Sabotage.Vent,
+        Sabotage_Interior: <boolean>this.Microwave.Sabotage.Interior,
+        Cook_Order: this.Microwave.List,
+      };
+      localStorage.setItem('Configuration', JSON.stringify(configuration));
+      //localStorage.setItem('Cook_Status', this.Configuration.CookStatus);
     },
     DigitSplit: (
       minutes: number,
       seconds: number
     ): [number, number, number, number] => {
       const digit_array = <[number, number, number, number]>[0, 0, 0, 0];
-      const split_minutes = `${minutes}`
-        .split('')
-        .map((digit) => Number(digit));
-      const split_seconds = `${seconds}`
-        .split('')
-        .map((digit) => Number(digit));
+      const split_minutes = !!minutes
+        ? `${minutes}`.split('').map((digit) => Number(digit))
+        : [null, null];
+      const split_seconds = !!seconds
+        ? `${seconds}`.split('').map((digit) => Number(digit))
+        : [0, 0];
       digit_array.splice(
         2 - split_minutes.length,
         split_minutes.length,

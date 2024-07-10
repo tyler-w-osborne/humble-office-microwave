@@ -7,7 +7,11 @@
         Reset / New Day
       </button>
       }
-      <button mat-icon-button (click)="People.Add_Person.Execute()">
+      <button
+        mat-icon-button
+        [disabled]="Configuration.CookStatus !== CookStatusEnum.Idle"
+        (click)="People.Add_Person.Execute()"
+      >
         <mat-icon>add</mat-icon>
       </button>
     </div>
@@ -74,28 +78,6 @@
           >
             <mat-icon>schedule</mat-icon>
           </button>
-          <!-- <button
-            mat-icon-button
-            class="button-skip"
-            [disabled]="
-              People.Selected.Person !== person ||
-              person.Completed !== CompletionEnum.NA
-            "
-            (click)="Actions.Skip(person)"
-          >
-            <mat-icon>skip_next</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="button-complete"
-            [disabled]="
-              People.Selected.Person !== person ||
-              person.Completed !== CompletionEnum.NA
-            "
-            (click)="Actions.Complete(person)"
-          >
-            <mat-icon>verified</mat-icon>
-          </button> -->
         </div>
       </div>
       }
@@ -169,15 +151,8 @@
     </div>
   </div> -->
   <div class="microwave-container">
-    <!--[matMenuTriggerFor]="MicrowaveMenu"-->
-    <!-- <div class="microwave" usemap="#microwave_map_2"></div> -->
     <img class="microwave" src="assets/microwave.png" usemap="#microwave_map" />
     <map name="microwave_map">
-      <!-- <area
-        shape="circle"
-        coords="100, 100, 10"
-        (click)="alert('you did it!')"
-      /> -->
       @if (Microwave.List.length > 0) {
       <area
         shape="poly"
@@ -210,27 +185,10 @@
         "
       />
       }
-      <!-- <area
-        shape="poly"
-        coords="7,110,23,126,23,171,7,151"
-        [matMenuTriggerFor]="Microwave_Vent"
-      /> -->
     </map>
-
-    <mat-menu #Microwave_Vent="matMenu">
-      <div mat-menu-item>Check For Dust</div>
-    </mat-menu>
-    <!-- <map name="microwave_map_2">
-      <area
-        shape="poly"
-        coords="100,100,200,200,300,300"
-        [matMenuTriggerFor]="MicrowaveMenu"
-      />
-    </map> -->
-    <!-- <button>Nuke It...</button> -->
   </div>
   @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
-  <div class="sidebar end-sidebar" style="grid-area: 1 / 5 / span 1 / span 1">
+  <div class="sidebar end-sidebar">
     <div class="header">
       <div>Cookin</div>
       <button
@@ -243,10 +201,7 @@
     </div>
     <div class="people-list">
       @for (person of Microwave.List; track person) {
-      <div
-        class="person-entry"
-        [style.background-color]="$first ? 'blueviolet' : 'salmon'"
-      >
+      <div class="person-entry" [class.border-light]="$first">
         <div
           style="
             display: flex;
@@ -327,7 +282,11 @@
   <mat-toolbar>Add Person</mat-toolbar>
   <mat-form-field>
     <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="People.Add_Person.Name" />
+    <input
+      matInput
+      [(ngModel)]="People.Add_Person.Name"
+      (keyup.enter)="People.Add_Person.Close(true)"
+    />
   </mat-form-field>
   <div
     style="
@@ -466,11 +425,6 @@
     ></div>
   </div>
 </ng-template>
-
-<mat-menu #MicrowaveMenu="matMenu">
-  <div mat-menu-item>Check Microwave</div>
-  <div mat-menu-item>Nuke It...</div>
-</mat-menu>
 
 <ng-template #StartMicrowave>
   <div class="part-button nuke" (click)="Actions.Start(null)">
