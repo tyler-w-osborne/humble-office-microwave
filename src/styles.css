@@ -18,7 +18,7 @@ div {
 }
 
 .custom-dialog div.mat-mdc-dialog-surface {
-  background-color: cyan;
+  background-color: #00ee00;
   border-radius: 0.5rem;
   padding: 0.5rem;
 }
