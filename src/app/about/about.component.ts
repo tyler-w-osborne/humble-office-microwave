@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './about.component.html',
   styleUrl: './about.component.css',
 })
 export class AboutComponent {
   Microwave = {
     Outline: `
-      M0,0
-      L500,0
+      M0,200
+      L500,200
       L500,500
       L0,500
       L0,0
@@ -19,27 +20,27 @@ export class AboutComponent {
     MainPanel: [
       `
       M0,250
-      L350,250
-      L350,500
+      L400,250
+      L400,500
       L50,500
       Q0,500 0,450
       L0,450
       `,
       `
       M35,285
-      L315,285
-      L315,465
+      L365,285
+      L365,465
       L35,465
       L35,285
       `,
     ],
     KeypadPanel: [
-      `M350,250
+      `M400,250
       L500,250
       L500,450
       Q500,500 450,500
-      L350,500
-      L350,250`,
+      L400,500
+      L400,250`,
     ],
     Top: [
       `M50,200
@@ -47,6 +48,10 @@ export class AboutComponent {
       C475,200 480,200 500,250
       L0,250
       C25,200 30,200 50,200`,
+      `
+      M60,210
+      L45,240
+      `,
     ],
   };
 
