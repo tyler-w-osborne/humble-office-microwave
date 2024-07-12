@@ -6,6 +6,7 @@
   --dark: #000000;
 
   --crimson: crimson;
+  --yellow: yellow;
 }
 
 .color-light {
@@ -30,6 +31,10 @@
 
 .color-crimson {
   color: var(--crimson);
+}
+
+.color-yellow {
+  color: var(--yellow);
 }
 
 .background-light {
@@ -77,7 +82,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background-color: rgb(133, 50, 50);
+  background-color: var(--dark);
   width: 100%;
   height: calc(100vh - 64px);
   overflow: hidden;

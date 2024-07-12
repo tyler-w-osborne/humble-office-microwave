@@ -182,6 +182,7 @@
                 .join("")
             }}
           </div>
+          @if (Configuration.CookStatus === CookStatusEnum.Idle) {
           <button
             mat-icon-button
             class="button-timer"
@@ -193,7 +194,9 @@
           >
             <mat-icon>schedule</mat-icon>
           </button>
+          }
         </div>
+
         <div
           style="
             display: flex;
@@ -206,7 +209,7 @@
           @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
           <button
             mat-icon-button
-            class="button-skip"
+            class="color-yellow"
             [disabled]="
               !$first ||
               [CookStatusEnum.Idle].includes(Configuration.CookStatus)
@@ -218,7 +221,7 @@
           @if ( person.Completed === CompletionEnum.NA) {
           <button
             mat-icon-button
-            class="button-complete"
+            class="color-medium-light"
             [disabled]="
               !$first ||
               [CookStatusEnum.Idle].includes(Configuration.CookStatus)
