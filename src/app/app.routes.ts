@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { HomeComponent } from './home/home.component';
 
-const title = (route: string): string => `Nuke Machine / ${route}`;
+const title = (route: string): string => `Time Machine / ${route}`;
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, title: title('Home') },
