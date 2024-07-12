@@ -151,13 +151,142 @@
     </div>
   </div> -->
   <div class="microwave-container">
-    <div style="filter: blur(1px); width: 350px; height: 226px"></div>
-    <img
+    <svg width="500" height="300" viewBox="0 200 500 302">
+      <!--Main Panel-->
+      <path
+        [attr.d]="SVG.MainPanel[0]"
+        style="fill: black; stroke: var(--light); stroke-width: 3"
+      ></path>
+      <rect
+        width="350"
+        height="200"
+        x="25"
+        y="275"
+        rx="10"
+        ry="10"
+        fill="white"
+        style="stroke: var(--light); stroke-width: 5"
+      />
+      <ellipse
+        _ngcontent-ng-c519640443=""
+        rx="150"
+        ry="30"
+        cx="200"
+        cy="430"
+        style="stroke: rgb(36 223 57); fill: #5f8b97; stroke-width: 10"
+      ></ellipse>
+      <a
+        [style.cursor]="
+          Configuration.CookStatus === CookStatusEnum.Cookin &&
+          !Microwave.List[0].Checked.includes(Parts.Interior)
+            ? 'pointer'
+            : 'auto'
+        "
+        (click)="
+          !Microwave.List[0].Checked.includes(Parts.Interior)
+            ? Microwave.Search($event, 'Interior')
+            : null
+        "
+      >
+        <path
+          [attr.d]="SVG.MainPanel[1]"
+          style="
+            stroke: rgb(255, 251, 0);
+            stroke-width: 0;
+            fill: rgba(25, 25, 25, 0.7);
+          "
+        >
+          <!-- <animate
+          attributeName="fill"
+          values="rgba(25, 25, 25, 0.7);rgba(255, 251, 0, 0.4);rgba(25, 25, 25, 0.7);"
+          dur="2s"
+          repeatCount="indefinite"
+        /> -->
+        </path>
+      </a>
+
+      <!--Keypad Panel-->
+      <path
+        [attr.d]="SVG.KeypadPanel[0]"
+        style="fill: black; stroke: var(--light); stroke-width: 3"
+      ></path>
+      <rect
+        width="75"
+        height="140"
+        x="412.5"
+        y="275"
+        rx="10"
+        ry="10"
+        fill="none"
+        style="stroke: #544f43; stroke-width: 5"
+      />
+      @if (Microwave.List.length > 0) {
+      <text x="425" y="300" fill="var(--light)" font-size="11">
+        @switch (Microwave.List[0].Completed) { @case
+        (CompletionEnum.InProgress) { Cookin... } @case
+        (CompletionEnum.Completed) { Done... } @default { } }
+      </text>
+      }
+      <line
+        x1="412.5"
+        y1="315"
+        x2="487.5"
+        y2="315"
+        style="stroke: #544f43; stroke-width: 5"
+      ></line>
+
+      <rect
+        width="75"
+        height="40"
+        x="412.5"
+        y="435"
+        rx="10"
+        ry="10"
+        fill="#6e6e6e"
+        style="stroke: #544f43; stroke-width: 5"
+      >
+        <!-- <animate
+          attributeName="fill"
+          values="#A0968C;pink;seagreen"
+          dur="1s"
+          repeatCount="indefinite"
+        /> -->
+      </rect>
+
+      <!--Top-->
+      <path
+        [attr.d]="SVG.Top[0]"
+        style="fill: #3b3838; stroke: white; stroke-width: 0.25"
+      ></path>
+      <a
+        [style.cursor]="
+          Configuration.CookStatus === CookStatusEnum.Cookin &&
+          !Microwave.List[0].Checked.includes(Parts.Vent)
+            ? 'pointer'
+            : 'auto'
+        "
+        (click)="
+          !Microwave.List[0].Checked.includes(Parts.Vent)
+            ? Microwave.Search($event, 'Vent')
+            : null
+        "
+      >
+        <path
+          [attr.d]="SVG.Top[1]"
+          style="fill: #6e6e6e; stroke: rgb(0, 0, 0); stroke-width: 2"
+        ></path>
+      </a>
+
+      <path
+        [attr.d]="SVG.Outline"
+        style="fill: none; stroke: deeppink; stroke-width: 0"
+      ></path>
+    </svg>
+    <!-- <img
       class="microwave"
       src="assets/microwave_2.png"
       usemap="#microwave_map"
     />
-    <!-- <img src="assets/micro.svg" /> -->
     <map name="microwave_map">
       @if (Microwave.List.length > 0) {
       <area
@@ -191,7 +320,7 @@
         "
       />
       }
-    </map>
+    </map> -->
   </div>
   @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
   <div class="sidebar end-sidebar">

@@ -424,3 +424,7 @@ button.button-skip:disabled {
 .border-dark {
   border: 1px solid var(--dark);
 }
+
+svg {
+  background-color: rgba(25, 25, 25, 0);
+}
