@@ -5,8 +5,8 @@ import { HomeComponent } from './home/home.component';
 const title = (route: string): string => `Time Machine / ${route}`;
 
 export const routes: Routes = [
-  { path: 'home', component: AboutComponent, title: title('Home') },
-  { path: 'about', component: HomeComponent, title: title('About') },
+  { path: 'home', component: HomeComponent, title: title('Home') },
+  { path: 'about', component: AboutComponent, title: title('About') },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' },
 ];
