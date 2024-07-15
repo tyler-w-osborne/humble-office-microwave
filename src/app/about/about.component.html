@@ -55,7 +55,13 @@
           "
         >
           <div style="color: #00ee00">
-            {{ person.Minutes }} :
+            {{
+              Configuration.DigitSplit(person.Minutes, person.Seconds)
+                .slice(1, 3)
+                .join("")
+            }}
+            :
+            <!-- {{ person.Minutes }} : -->
             {{
               Configuration.DigitSplit(person.Minutes, person.Seconds)
                 .slice(2, 4)
