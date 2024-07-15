@@ -553,6 +553,13 @@ export class AboutComponent implements OnInit, AfterViewInit {
     alert(input);
   }
 
+  get Traveler_Entries(): Person[] {
+    if (this.Configuration.CookStatus === CookStatus.Idle) {
+      return this.People.List;
+    }
+    return this.Microwave.List;
+  }
+
   Configuration = {
     CookStatus: <CookStatus>CookStatus.Idle,
     Initialize: () => {
@@ -569,15 +576,8 @@ export class AboutComponent implements OnInit, AfterViewInit {
           this.Microwave.Sabotage.Vent = last_configuration.Sabotage_Vent;
           this.Microwave.Sabotage.Interior =
             last_configuration.Sabotage_Interior;
-          // if (!!last_configuration.Sabotage_Vent) {
-          //   this.Microwave.Sabotage.ChangeReminders(Sabotage.Vent);
-          // }
-          // if (!!last_configuration.Sabotage_Interior) {
-          //   this.Microwave.Sabotage.ChangeReminders(Sabotage.Interior);
-          // }
           return;
         } else if (last_configuration.Cook_Status === CookStatus.Cookin) {
-          // this.Microwave.Shuffle()
           const cook_order = last_configuration.Cook_Order.filter(
             (person_entry) =>
               !!this.People.List.find(
