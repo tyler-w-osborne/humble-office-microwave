@@ -24,7 +24,7 @@
       >
         <button
           mat-icon-button
-          class="button-remove-person"
+          class="color-crimson"
           [disabled]="People.Selected.Person !== person"
           (click)="People.Remove_Person(person)"
         >
@@ -70,7 +70,7 @@
           </div>
           <button
             mat-icon-button
-            class="button-timer"
+            class="color-cyan"
             [disabled]="
               People.Selected.Person !== person ||
               Configuration.CookStatus !== CookStatusEnum.Idle
@@ -262,10 +262,15 @@
     <div class="action-header">
       <div class="color-light">Traveler List</div>
       @if (Configuration.CookStatus !== CookStatusEnum.Idle) {
-      <button mat-icon-button (click)="People.Reset(); Microwave.Reset()">
+      <button
+        mat-icon-button
+        class="color-crimson"
+        (click)="People.Reset(); Microwave.Reset()"
+        matTooltip="Reset"
+      >
         <mat-icon>refresh</mat-icon>
       </button>
-      }
+      } @if (Configuration.CookStatus === CookStatusEnum.Idle) {
       <button
         mat-icon-button
         class="color-seagreen"
@@ -275,7 +280,6 @@
       >
         <mat-icon>add</mat-icon>
       </button>
-      @if (Configuration.CookStatus === CookStatusEnum.Idle) {
       <button
         mat-icon-button
         class="color-seagreen"
@@ -287,6 +291,7 @@
       } @else {
       <button
         mat-icon-button
+        class="color-cyan"
         (click)="Microwave.Shuffle()"
         matTooltip="Re-Shuffle"
       >
@@ -358,7 +363,7 @@
           @if (Configuration.CookStatus === CookStatusEnum.Idle) {
           <button
             mat-icon-button
-            class="color-seagreen"
+            class="color-cyan"
             [disabled]="
               People.Selected.Person !== person ||
               Configuration.CookStatus !== CookStatusEnum.Idle
@@ -407,7 +412,7 @@
           } @else if ( person.Completed === CompletionEnum.InProgress) {
           <button
             mat-icon-button
-            class="button-complete"
+            class="color-seagreen"
             [disabled]="
               !$first ||
               [CookStatusEnum.Idle].includes(Configuration.CookStatus)
@@ -476,7 +481,7 @@
           >
             <button
               mat-icon-button
-              class="button-skip"
+              class="color-cyan"
               [disabled]="
                 !$first ||
                 [CookStatusEnum.Idle].includes(Configuration.CookStatus)
@@ -488,7 +493,7 @@
             @if (person.Completed === CompletionEnum.NA) {
             <button
               mat-icon-button
-              class="button-complete"
+              class="color-seagreen"
               [disabled]="
                 !$first ||
                 [CookStatusEnum.Idle].includes(Configuration.CookStatus)
@@ -501,7 +506,7 @@
             } @else if (person.Completed === CompletionEnum.InProgress) {
             <button
               mat-icon-button
-              class="button-complete"
+              class="color-seagreen"
               [disabled]="
                 !$first ||
                 [CookStatusEnum.Idle].includes(Configuration.CookStatus)

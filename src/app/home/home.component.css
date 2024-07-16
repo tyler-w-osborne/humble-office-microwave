@@ -7,7 +7,9 @@
 
   --crimson: crimson;
   --yellow: yellow;
+  --cyan: rgb(62, 179, 179);
   --seagreen: seagreen;
+  --purple: rgb(100, 36, 100);
 }
 
 .color-light {
@@ -38,8 +40,16 @@
   color: var(--yellow);
 }
 
+.color-cyan {
+  color: var(--cyan);
+}
+
 .color-seagreen {
   color: var(--seagreen);
+}
+
+.color-purple {
+  color: var(--purple);
 }
 
 .background-light {
